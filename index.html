@@ -417,9 +417,9 @@
 
     <div class="stage-menu-bar">
         <button class="stage-menu-btn" id="m-btn-1" onclick="jumpToStage(1)">👀 1단계 연습</button>
-        <button class="stage-menu-btn" id="m-btn-2" onclick="jumpToStage(2)">📝 2단계 퀴즈</button>
-        <button class="stage-menu-btn" id="m-btn-3" onclick="jumpToStage(3)">🔄 3단계 오답노트</button>
-        <button class="stage-menu-btn" id="m-btn-4" onclick="jumpToStage(4)">👾 4단계 최종보스</button>
+        <button class="stage-menu-btn" id="m-btn-2" onclick="jumpToStage(2)">✏️ 2단계 빈칸채우기</button>
+        <button class="stage-menu-btn" id="m-btn-3" onclick="jumpToStage(3)">📝 3단계 완전입력</button>
+        <button class="stage-menu-btn" id="m-btn-4" onclick="jumpToStage(4)">🔄 4단계 오답반복</button>
     </div>
 
     <hr style="border: 1px solid #eee; margin-bottom: 30px;">
@@ -576,6 +576,7 @@ document.addEventListener('keydown', function(event) {
         else if (currentStage === 2) { checkStage2(); }
         else if (currentStage === 3) { checkStage3(); }
         else if (currentStage === 4) { checkStage4(); }
+
     }
 });
 
@@ -601,12 +602,12 @@ function jumpToStage(stageNum) {
     } else if (stageNum === 2) {
         startStage2();
     } else if (stageNum === 3) {
-        if (wrongWords.length === 0 && activeWords.length > 0) {
-            wrongWords.push({eng: activeWords[0].eng, kor: activeWords[0].kor + " (연습용 오답)", blank: activeWords[0].blank});
-        }
-        wrongCount = 1;
         startStage3();
     } else if (stageNum === 4) {
+        if (wrongWords.length === 0 && activeWords.length > 0) {
+            wrongWords.push({eng: activeWords[0].eng, kor: activeWords[0].kor + " (연습용)", blank: activeWords[0].blank});
+        }
+        wrongCount = 1;
         startStage4();
     }
 }
@@ -615,7 +616,7 @@ function movePrev() {
     if (currentIndex > 0) {
         currentIndex--;
         if (currentStage === 1) startStage1();
-        else if (currentStage === 2) startStage2();
+        else if (currentStage === 3) startStage3();
     }
 }
 
@@ -623,13 +624,13 @@ function moveNext() {
     if (currentIndex < activeWords.length - 1) {
         currentIndex++;
         if (currentStage === 1) startStage1();
-        else if (currentStage === 2) startStage2();
+        else if (currentStage === 3) startStage3();
     } else if (currentIndex === activeWords.length - 1 && currentStage === 1) {
         currentIndex = 0;
         startStage2();
-    } else if (currentIndex === activeWords.length - 1 && currentStage === 2) {
+    } else if (currentIndex === activeWords.length - 1 && currentStage === 3) {
         currentIndex++;
-        startStage2();
+        startStage3();
     }
 }
 
@@ -749,30 +750,24 @@ function startStage2() {
     if(currentIndex < activeWords.length) {
         let originalIdx = words.indexOf(activeWords[currentIndex]);
         let bookNum = START_BOOK_NUMBER + originalIdx;
-        let isFirst = currentIndex === 0 ? "disabled" : "";
+        let wordObj = activeWords[currentIndex];
 
         zone.innerHTML = `
-            <h2>📝 2단계: 뜻 보고 영어 맞히기 (${bookNum}번)</h2>
-            <p style="font-size:22px; color:#ff6b6b; font-weight:bold;">★ 시간 제한이 없으니 천천히 정확하게 치세요! ★</p>
-            <div class="meaning-display" style="font-size:50px; font-weight:bold;">뜻: ${activeWords[currentIndex].kor}</div>
-            <input type="text" id="ans2" placeholder="영어 단어 입력" autocomplete="off">
+            <h2>✏️ 2단계: 빈칸 채우기 (${bookNum}번)</h2>
+            <p style="font-size:20px; opacity:0.8;">힌트를 보고 빠진 철자를 생각하며 단어 전체를 입력하세요!</p>
+            <div class="meaning-display" style="font-size:45px; font-weight:bold;">뜻: ${wordObj.kor}</div>
+            <div>
+                <div class="final-blank-hint">${wordObj.blank}</div>
+            </div>
+            <input type="text" id="ans2" placeholder="단어 전체를 입력하세요" style="width:85%;" autocomplete="off">
             <br><button class="nav-btn" id="btn2" onclick="checkStage2()">정답 확인</button>
             <div id="msg2" class="message"></div>
-
-            <div class="move-btn-container">
-                <button class="side-btn" onclick="movePrev()" ${isFirst}>◀ 뒤로가기</button>
-                <button class="side-btn" onclick="moveNext()">앞으로가기 ▶</button>
-            </div>
         `;
         document.getElementById('ans2').focus();
     } else {
-        if(wrongWords.length > 0) {
-            wrongCount = 1;
-            startStage3();
-        } else {
-            currentIndex = 0;
-            startStage4();
-        }
+        currentIndex = 0;
+        wrongWords = [];
+        startStage3();
     }
 }
 
@@ -784,24 +779,18 @@ function checkStage2() {
     let userAns = inputEl.value.trim().toLowerCase();
     let correctAns = activeWords[currentIndex].eng.trim().toLowerCase();
     let msg = document.getElementById('msg2');
-    
-    inputEl.disabled = true;
-    btnEl.disabled = true;
 
-    const eng = activeWords[currentIndex].eng;
     if(userAns === correctAns) {
+        inputEl.disabled = true;
+        btnEl.disabled = true;
         msg.style.color = "green";
-        msg.innerHTML = `딩동댕! 정답입니다. 🎉 <button onclick="speakWord('${eng.replace(/'/g,"\\'")}') " style="background:none;border:none;cursor:pointer;font-size:22px;">🔊</button>`;
-        speakWord(eng);
-        setTimeout(() => { currentIndex++; startStage2(); }, 1250);
+        msg.innerHTML = `통과! 🎉 <button onclick="speakWord('${activeWords[currentIndex].eng.replace(/'/g,"\\'")}') " style="background:none;border:none;cursor:pointer;font-size:22px;">🔊</button>`;
+        speakWord(activeWords[currentIndex].eng);
+        setTimeout(() => { currentIndex++; startStage2(); }, 1400);
     } else {
         msg.style.color = "red";
-        msg.innerHTML = `땡! 정답은 [ ${eng} ] 입니다. 😢 <button onclick="speakWord('${eng.replace(/'/g,"\\'")}') " style="background:none;border:none;cursor:pointer;font-size:22px;">🔊</button>`;
-        speakWord(eng);
-        if(!wrongWords.includes(activeWords[currentIndex])) {
-            wrongWords.push(activeWords[currentIndex]);
-        }
-        setTimeout(() => { currentIndex++; startStage2(); }, 2200);
+        msg.innerHTML = "철자가 틀렸거나 빠진 부분이 있습니다! 힌트를 보고 다시 신중하게 입력해 보세요.";
+        inputEl.focus();
     }
 }
 
@@ -809,20 +798,38 @@ function startStage3() {
     currentStage = 3;
     updateMenuHighlight(3);
 
-    if(wrongWords.length > 0) {
-        let currentWord = wrongWords[0];
+    if(activeWords.length === 0) return;
+
+    if(currentIndex < activeWords.length) {
+        let originalIdx = words.indexOf(activeWords[currentIndex]);
+        let bookNum = START_BOOK_NUMBER + originalIdx;
+        let isFirst = currentIndex === 0 ? "disabled" : "";
+
         zone.innerHTML = `
-            <h2>🔄 3단계: 오답 무한 반복 모드 [3-${wrongCount}]</h2>
-            <p style="font-size:20px; opacity:0.8;">틀린 단어를 확실하게 외워봅시다!</p>
-            <div class="meaning-display" style="font-size:50px; font-weight:bold;">뜻: ${currentWord.kor}</div>
-            <input type="text" id="ans3" placeholder="영어 단어 다시 입력" autocomplete="off">
+            <h2>📝 3단계: 뜻 보고 영어 완전 입력 (${bookNum}번)</h2>
+            <p style="font-size:22px; color:#ff6b6b; font-weight:bold;">★ 힌트 없이! 뜻만 보고 영어 단어를 정확하게 치세요! ★</p>
+            <div class="meaning-display" style="font-size:50px; font-weight:bold;">뜻: ${activeWords[currentIndex].kor}</div>
+            <input type="text" id="ans3" placeholder="영어 단어 입력" autocomplete="off">
             <br><button class="nav-btn" id="btn3" onclick="checkStage3()">정답 확인</button>
             <div id="msg3" class="message"></div>
+
+            <div class="move-btn-container">
+                <button class="side-btn" onclick="movePrev()" ${isFirst}>◀ 뒤로가기</button>
+                <button class="side-btn" onclick="moveNext()">앞으로가기 ▶</button>
+            </div>
         `;
         document.getElementById('ans3').focus();
     } else {
-        currentIndex = 0;
-        startStage4();
+        if(wrongWords.length > 0) {
+            wrongCount = 1;
+            startStage4();
+        } else {
+            zone.innerHTML = `
+                <h1 style="color:#27ae60; font-size:60px;">🏆 미션 컴플리트! 🏆</h1>
+                <p style="font-size:35px; font-weight:bold;">선택하신 시험 범위 단어 공부를 모두 끝마쳤습니다! 최고예요!</p>
+                <br><button class="nav-btn" onclick="initGame()">전체 단어 다시 공부하기</button>
+            `;
+        }
     }
 }
 
@@ -832,57 +839,49 @@ function checkStage3() {
     if(!inputEl || inputEl.disabled) return;
 
     let userAns = inputEl.value.trim().toLowerCase();
-    let currentWord = wrongWords.shift();
-    let correctAns = currentWord.eng.trim().toLowerCase();
+    let correctAns = activeWords[currentIndex].eng.trim().toLowerCase();
     let msg = document.getElementById('msg3');
-    
+
     inputEl.disabled = true;
     btnEl.disabled = true;
-    
-    const eng3 = currentWord.eng;
+
+    const eng = activeWords[currentIndex].eng;
     if(userAns === correctAns) {
         msg.style.color = "green";
-        msg.innerHTML = `좋아요! 이번엔 맞혔습니다. 👍 <button onclick="speakWord('${eng3.replace(/'/g,"\\'")}') " style="background:none;border:none;cursor:pointer;font-size:22px;">🔊</button>`;
-        speakWord(eng3);
-        wrongCount++;
-        setTimeout(() => { startStage3(); }, 1200);
+        msg.innerHTML = `딩동댕! 정답입니다. 🎉 <button onclick="speakWord('${eng.replace(/'/g,"\\'")}') " style="background:none;border:none;cursor:pointer;font-size:22px;">🔊</button>`;
+        speakWord(eng);
+        setTimeout(() => { currentIndex++; startStage3(); }, 1250);
     } else {
         msg.style.color = "red";
-        msg.innerHTML = `아직 못 외웠군요! 정답은 [ ${eng3} ] 입니다. 맨 뒤로 보냅니다. <button onclick="speakWord('${eng3.replace(/'/g,"\\'")}') " style="background:none;border:none;cursor:pointer;font-size:22px;">🔊</button>`;
-        speakWord(eng3);
-        wrongWords.push(currentWord);
-        wrongCount++;
-        setTimeout(() => { startStage3(); }, 2200);
+        msg.innerHTML = `땡! 정답은 [ ${eng} ] 입니다. 😢 <button onclick="speakWord('${eng.replace(/'/g,"\\'")}') " style="background:none;border:none;cursor:pointer;font-size:22px;">🔊</button>
+            <br><button class="nav-btn" style="margin-top:12px;" onclick="nextAfterWrong3()">다음으로 ▶</button>`;
+        speakWord(eng);
+        if(!wrongWords.includes(activeWords[currentIndex])) {
+            wrongWords.push(activeWords[currentIndex]);
+        }
     }
+}
+
+function nextAfterWrong3() {
+    currentIndex++;
+    startStage3();
 }
 
 function startStage4() {
     currentStage = 4;
     updateMenuHighlight(4);
 
-    if(activeWords.length === 0) return;
-
-    if(currentIndex < activeWords.length) {
-        let originalIdx = words.indexOf(activeWords[currentIndex]);
-        let bookNum = START_BOOK_NUMBER + originalIdx;
-        let wordObj = activeWords[currentIndex];
-
+    if(wrongWords.length > 0) {
+        let currentWord = wrongWords[0];
         zone.innerHTML = `
-            <h2>👾 4단계: 최종 보스 빈칸 스펠링 채우기 (${bookNum}번)</h2>
-            <div class="meaning-display" style="font-size:45px; font-weight:bold;">뜻: ${wordObj.kor}</div>
-            
-            <div>
-                <div class="final-blank-hint">${wordObj.blank}</div>
-            </div>
-            
-            <input type="text" id="ans4" placeholder="지워진 부분을 생각해서 단어 전체를 입력하세요" style="width: 85%;" autocomplete="off">
-            <br>
-            <button class="nav-btn" id="btn4" onclick="checkStage4()">정답 제출</button>
+            <h2>🔄 4단계: 오답 무한 반복 모드 [4-${wrongCount}]</h2>
+            <p style="font-size:20px; opacity:0.8;">틀린 단어를 확실하게 외워봅시다!</p>
+            <div class="meaning-display" style="font-size:50px; font-weight:bold;">뜻: ${currentWord.kor}</div>
+            <input type="text" id="ans4" placeholder="영어 단어 다시 입력" autocomplete="off">
+            <br><button class="nav-btn" id="btn4" onclick="checkStage4()">정답 확인</button>
             <div id="msg4" class="message"></div>
         `;
-        
         document.getElementById('ans4').focus();
-
     } else {
         zone.innerHTML = `
             <h1 style="color:#27ae60; font-size:60px;">🏆 미션 컴플리트! 🏆</h1>
@@ -898,23 +897,36 @@ function checkStage4() {
     if(!inputEl || inputEl.disabled) return;
 
     let userAns = inputEl.value.trim().toLowerCase();
-    let correctAns = activeWords[currentIndex].eng.trim().toLowerCase();
+    let currentWord = wrongWords.shift();
+    let correctAns = currentWord.eng.trim().toLowerCase();
     let msg = document.getElementById('msg4');
 
-    if(userAns === correctAns) {
-        inputEl.disabled = true;
-        btnEl.disabled = true;
-        msg.style.color = "green";
-        msg.innerHTML = "통과! 전체 스펠링 완벽 클리어! ✨";
+    inputEl.disabled = true;
+    btnEl.disabled = true;
 
-        speakWord(correctAns);
-        setTimeout(() => { currentIndex++; startStage4(); }, 1400);
+    const eng4 = currentWord.eng;
+    if(userAns === correctAns) {
+        msg.style.color = "green";
+        msg.innerHTML = `좋아요! 이번엔 맞혔습니다. 👍 <button onclick="speakWord('${eng4.replace(/'/g,"\\'")}') " style="background:none;border:none;cursor:pointer;font-size:22px;">🔊</button>`;
+        speakWord(eng4);
+        wrongCount++;
+        setTimeout(() => { startStage4(); }, 1200);
     } else {
         msg.style.color = "red";
-        msg.innerHTML = "철자가 틀렸거나 빠진 부분이 있습니다! 힌트를 보고 다시 신중하게 입력해 보세요.";
-        inputEl.focus();
+        msg.innerHTML = `아직 못 외웠군요! 정답은 [ ${eng4} ] 입니다. 맨 뒤로 보냅니다. <button onclick="speakWord('${eng4.replace(/'/g,"\\'")}') " style="background:none;border:none;cursor:pointer;font-size:22px;">🔊</button>
+            <br><button class="nav-btn" style="margin-top:12px;" onclick="nextAfterWrong4()">다음으로 ▶</button>`;
+        speakWord(eng4);
+        wrongWords.push(currentWord);
+        wrongCount++;
     }
 }
+
+function nextAfterWrong4() {
+    startStage4();
+}
+
+// 최초 테마: 시크한 다크 그레이 (index 8)
+selectTheme(8);
 
 // 최초 초기화 함수 구동
 initGame();
