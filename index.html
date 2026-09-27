@@ -2,738 +2,831 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>영어 단어 마스터</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>나만의 영어 단어 마스터</title>
     <style>
-        :root {
-            --bg:      linear-gradient(145deg, #cfdff5 0%, #d8d0f0 100%);
-            --card:    #ffffff;
-            --primary: #4a78d4;
-            --pri-dk:  #3562b8;
-            --text:    #1e2d4a;
-            --sub:     #7088b0;
-            --border:  #d0daea;
-            --meaning: #d97706;
-            --green:   #16a34a;
-            --red:     #dc2626;
-            --orange:  #ea580c;
-            --shadow:  0 8px 32px rgba(60,90,160,0.13);
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
-            background: var(--bg);
-            min-height: 100vh;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            padding: 12px 8px;
-        }
-
-        /* ─── 카드 ─── */
-        .card {
-            background: var(--card);
-            border-radius: 20px;
-            box-shadow: var(--shadow);
-            width: 100%;
-            min-height: 80vh;
-            padding: 22px 32px 20px;
-            border: 1px solid rgba(200,215,240,0.6);
-        }
-
-        /* ─── 헤더 ─── */
-        .header {
+            font-family: 'Malgun Gothic', sans-serif;
+            background-color: #f0f4f8;
+            color: #2c3e50;
+            padding: 30px;
             text-align: center;
-            padding-bottom: 14px;
-            border-bottom: 2px solid #f0f4fb;
-            margin-bottom: 14px;
+            transition: background 0.4s, color 0.4s;
+            position: relative;
+            overflow-x: hidden;
+            min-height: 100vh;
+            margin: 0;
+            box-sizing: border-box;
         }
-        .header h1 {
-            font-size: 22px; font-weight: 900; letter-spacing: -0.5px;
-            color: var(--text);
-        }
-        .header h1 .hi { color: var(--primary); }
-
-        /* ─── 상단 바 ─── */
-        .top-bar {
-            display: flex; align-items: center; justify-content: center;
-            gap: 7px; flex-wrap: wrap;
-            background: #f4f7fd; border-radius: 10px;
-            padding: 9px 14px; margin-bottom: 7px;
-            border: 1px solid var(--border);
-        }
-        .top-bar label { font-size: 12px; font-weight: 800; color: var(--sub); }
-        .range-input {
-            width: 58px; font-size: 14px; padding: 5px 6px;
-            border: 1.5px solid var(--border); border-radius: 7px;
-            text-align: center; color: var(--text); background: white;
-        }
-        .range-input:focus { outline: none; border-color: var(--primary); }
-        .top-bar span.sep { color: var(--sub); font-size: 13px; }
-        .btn-apply {
-            font-size: 12px; padding: 6px 13px;
-            background: var(--primary); color: white;
-            border: none; border-radius: 7px; cursor: pointer; font-weight: 800;
-        }
-        .btn-apply:hover { background: var(--pri-dk); }
-        .vdiv { width: 1px; height: 18px; background: var(--border); }
-        .btn-shuffle {
-            font-size: 12px; padding: 6px 12px;
-            background: white; color: var(--sub);
-            border: 1.5px solid var(--border); border-radius: 7px;
-            cursor: pointer; font-weight: 800; transition: all 0.2s;
-        }
-        .btn-shuffle.on { background: #dcfce7; border-color: #86efac; color: #15803d; }
-
-        .range-info {
-            text-align: center; font-size: 12px;
-            color: var(--sub); font-weight: 700; margin-bottom: 12px;
-        }
-
-        /* ─── 단계 탭 ─── */
-        .stage-tabs {
-            display: flex; gap: 5px; margin-bottom: 14px;
-            background: #f4f7fd; padding: 5px; border-radius: 11px;
-        }
-        .tab {
-            flex: 1; font-size: 13px; padding: 8px 4px;
-            background: white; color: var(--sub);
-            border: 1.5px solid var(--border); border-radius: 8px;
-            cursor: pointer; font-weight: 800; transition: all 0.2s; text-align: center;
-        }
-        .tab:hover { border-color: var(--primary); color: var(--primary); }
-        .tab.active {
-            background: var(--primary); color: white; border-color: var(--primary);
-            box-shadow: 0 2px 10px rgba(74,120,212,0.3);
-        }
-
-        /* ─── 게임존 ─── */
-        #game-zone { text-align: center; }
-
-        /* ─── 진행률 ─── */
-        .prog-wrap { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-        .prog-bar { flex: 1; height: 9px; background: #eef1f8; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
-        .prog-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #88b4ff); border-radius: 6px; transition: width 0.4s; }
-        .prog-text { font-size: 12px; font-weight: 800; color: var(--sub); white-space: nowrap; }
-
-        /* ─── 스트릭 ─── */
-        .streak {
-            display: inline-block; font-size: 13px; font-weight: 800;
-            padding: 4px 14px; border-radius: 20px; margin-bottom: 8px;
-        }
-        .s0  { background: #f0f4fb; color: var(--sub); }
-        .s1  { background: #fef9c3; color: #a16207; }
-        .s2  { background: #fed7aa; color: #c2410c; animation: pop .4s; }
-        .s3  { background: linear-gradient(90deg,#fbbf24,#ef4444); color:white; animation: pop .4s; box-shadow: 0 0 10px rgba(251,191,36,.35); }
-        @keyframes pop { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
-
-        /* ─── 단계 타이틀 ─── */
-        .stage-title {
-            font-size: 18px; font-weight: 800; color: var(--primary); margin-bottom: 10px;
-        }
-
-        /* ─── 단어 표시 (중앙) ─── */
-        .word-wrap {
-            display: flex; align-items: center; justify-content: center;
-            gap: 10px; margin: 6px 0 2px;
-        }
-        .word-big {
-            font-size: 48px; font-weight: 900; color: var(--text);
-            letter-spacing: -1px; line-height: 1.1;
-        }
-        .btn-sound {
-            font-size: 24px; cursor: pointer; background: #eff5ff;
-            border: 1.5px solid #bfdbfe; color: var(--primary);
-            border-radius: 8px; padding: 4px 10px; transition: all 0.2s;
-            font-weight: 800;
-        }
-        .btn-sound:hover { background: #dbeafe; transform: scale(1.08); }
-
-        /* ─── 한국어 뜻 ─── */
-        .kor-big {
-            font-size: 28px; font-weight: 900; color: var(--meaning);
-            margin: 4px 0 10px; text-align: center;
-        }
-
-        /* ─── 힌트 빈칸 ─── */
-        .hint-line {
-            font-size: 28px; font-weight: 700; letter-spacing: 4px;
-            font-family: 'Courier New', monospace; color: var(--text);
-            background: #f4f7fd; padding: 10px 20px;
-            border-radius: 10px; border: 1.5px dashed var(--border);
-            display: inline-block; margin: 6px 0 10px;
-        }
-
-        /* ─── 안내 문구 ─── */
-        .hint-text { font-size: 13px; color: var(--sub); font-weight: 600; margin: 3px 0 8px; }
-        .meaning-ph { font-size: 16px; color: #aab8d0; margin: 8px 0 12px; }
-
-        /* ─── 자기평가 버튼 ─── */
-        .assess-label { font-size: 13px; color: var(--sub); font-weight: 700; margin-bottom: 8px; }
-        .assess-row   { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 4px 0 6px; }
-        .abtn {
-            font-size: 20px; padding: 14px 26px; border: none;
-            border-radius: 12px; cursor: pointer; font-weight: 900;
-            transition: transform 0.15s, box-shadow 0.15s;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.09);
-        }
-        .abtn:hover { transform: scale(1.07); box-shadow: 0 5px 14px rgba(0,0,0,0.14); }
-        .abtn-know    { background: #dcfce7; color: #15803d; }
-        .abtn-unsure  { background: #fef9c3; color: #a16207; }
-        .abtn-unknown { background: #fee2e2; color: #b91c1c; }
-
-        /* ─── 입력창 ─── */
-        .ans-input {
-            width: 78%; font-size: 26px; padding: 13px 16px;
-            border: 2px solid var(--border); border-radius: 10px;
-            text-align: center; color: var(--text); margin: 6px 0;
-            transition: border-color 0.2s;
-        }
-        .ans-input:focus { outline: none; border-color: var(--primary); }
-
-        /* ─── 메인 버튼 ─── */
-        .btn-main {
-            font-size: 20px; padding: 13px 36px;
-            background: var(--primary); color: white;
-            border: none; border-radius: 10px; cursor: pointer; font-weight: 900;
-            transition: background 0.2s, transform 0.15s; margin: 4px;
-        }
-        .btn-main:hover { background: var(--pri-dk); transform: scale(1.03); }
-        .btn-main:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-        /* ─── 앞뒤 버튼 ─── */
-        .nav-row { display: flex; justify-content: space-between; margin-top: 10px; }
-        .btn-nav {
-            font-size: 13px; padding: 8px 16px;
-            background: #f4f7fd; color: var(--sub);
-            border: 1.5px solid var(--border); border-radius: 8px;
-            cursor: pointer; font-weight: 800; transition: all 0.2s;
-        }
-        .btn-nav:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
-        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
-
-        /* ─── 메시지 ─── */
-        .msg { font-size: 22px; font-weight: 800; margin: 10px 0; min-height: 30px; }
-        .msg.ok  { color: var(--green); }
-        .msg.err { color: var(--red); }
-        .btn-sound-sm {
-            font-size: 13px; padding: 5px 12px; margin-left: 6px;
-            background: #eff5ff; color: var(--primary);
-            border: 1.5px solid #bfdbfe; border-radius: 7px;
-            cursor: pointer; font-weight: 700; transition: all 0.2s; vertical-align: middle;
-        }
-        .btn-sound-sm:hover { background: #dbeafe; }
-
-        /* ─── 1단계 요약 ─── */
-        .summary-box {
-            background: linear-gradient(135deg,#f0f9ff,#f0fdf4);
-            border-radius: 12px; padding: 16px 20px; margin: 10px 0;
-            border: 1.5px solid var(--border); text-align: center;
-        }
-        .assess-badges { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
-        .badge { font-size: 14px; padding: 6px 14px; border-radius: 20px; font-weight: 900; }
-        .b-know    { background: #dcfce7; color: #15803d; }
-        .b-unsure  { background: #fef9c3; color: #a16207; }
-        .b-unknown { background: #fee2e2; color: #b91c1c; }
-
-        /* ─── 결과 화면 ─── */
-        .result-box {
-            background: linear-gradient(135deg,#f0f9ff,#e0f2fe);
-            border-radius: 14px; padding: 18px; margin: 10px 0;
-            border: 1.5px solid #bae6fd;
-        }
-        .score-num { font-size: 60px; font-weight: 900; color: #0369a1; line-height: 1; }
-        .score-sub { font-size: 13px; color: var(--sub); margin-bottom: 8px; }
-        .stat-row  { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 10px 0; }
-        .stat      { background: white; border-radius: 10px; padding: 10px 16px; font-size: 13px; font-weight: 800; box-shadow: 0 2px 6px rgba(0,0,0,0.07); min-width: 80px; }
-        .stat .n   { font-size: 28px; display: block; }
-        .stat.c .n { color: var(--green); }
-        .stat.w .n { color: var(--red); }
-        .stat.t .n { color: var(--primary); }
-        .wrong-list { background: #fff1f2; border-radius: 10px; padding: 10px 14px; margin: 8px 0; text-align: left; border: 1px solid #fecdd3; max-height: 140px; overflow-y: auto; }
-        .wl-title   { font-size: 13px; font-weight: 800; color: #be123c; margin-bottom: 6px; }
-        .wl-item    { font-size: 13px; padding: 3px 0; border-bottom: 1px solid #fecdd3; }
-        .wl-item:last-child { border-bottom: none; }
-        /* ─── 회차 범위표 ─── */
-        .round-toggle {
-            text-align: center; margin-bottom: 7px;
-        }
-        .btn-round-toggle {
-            font-size: 12px; padding: 5px 14px;
-            background: white; color: var(--sub);
-            border: 1.5px solid var(--border); border-radius: 20px;
-            cursor: pointer; font-weight: 700; transition: all 0.2s;
-        }
-        .btn-round-toggle:hover { border-color: var(--primary); color: var(--primary); }
-        .round-table-wrap {
+        
+        /* 움직이는 하늘 배경 구름 생성 구역 */
+        .sky-background {
             display: none;
-            background: #f8faff; border-radius: 10px;
-            border: 1px solid var(--border); margin-bottom: 8px;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, #7fc1ff 0%, #bce2ff 100%);
+            z-index: -1;
             overflow: hidden;
         }
-        .round-table {
-            width: 100%; border-collapse: collapse; font-size: 12px;
+        /* 구름 모양 구조 */
+        .cloud {
+            position: absolute;
+            background: #ffffff;
+            border-radius: 200px;
+            opacity: 0.85;
+            animation: moveCloud linear infinite;
         }
-        .round-table th {
-            background: var(--primary); color: white;
-            padding: 6px 8px; font-weight: 800; text-align: center;
+        .cloud:before, .cloud:after {
+            content: '';
+            position: absolute;
+            background: #ffffff;
+            border-radius: 100px;
         }
-        .round-table td {
-            padding: 5px 8px; text-align: center;
-            border-bottom: 1px solid var(--border); color: var(--text);
-            font-weight: 700;
+        .c1 { width: 150px; height: 50px; top: 15%; animation-duration: 25s; opacity: 0.9; transform: scale(1); }
+        .c1:before { width: 60px; height: 60px; top: -30px; left: 20px; }
+        .c1:after { width: 80px; height: 80px; top: -40px; right: 20px; }
+
+        .c2 { width: 220px; height: 70px; top: 45%; animation-duration: 40s; opacity: 0.7; transform: scale(0.8); }
+        .c2:before { width: 90px; height: 90px; top: -45px; left: 30px; }
+        .c2:after { width: 110px; height: 110px; top: -55px; right: 30px; }
+
+        .c3 { width: 180px; height: 60px; top: 75%; animation-duration: 32s; opacity: 0.8; transform: scale(1.2); }
+        .c3:before { width: 70px; height: 70px; top: -35px; left: 25px; }
+        .c3:after { width: 90px; height: 90px; top: -45px; right: 25px; }
+
+        @keyframes moveCloud {
+            0% { left: -300px; }
+            100% { left: 100%; }
         }
-        .round-table tr:last-child td { border-bottom: none; }
-        .round-table tr:nth-child(even) td { background: #eef3ff; }
-        .btn-round-apply {
-            font-size: 11px; padding: 3px 10px;
-            background: var(--primary); color: white;
-            border: none; border-radius: 10px; cursor: pointer;
-            font-weight: 800; transition: background 0.2s;
+
+        /* 오른쪽 상단 전체 메뉴 구역 */
+        .theme-menu-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-align: right;
+            z-index: 1000;
         }
-        .btn-round-apply:hover { background: var(--pri-dk); }
+
+        /* 메인 버튼 스타일 */
+        .theme-toggle-btn {
+            font-size: 18px;
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 66px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+        .theme-toggle-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* 22가지 색상이 들어있는 사각형 보드 상자 */
+        .theme-board-container {
+            display: none;
+            margin-top: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            width: 220px;
+            text-align: left;
+        }
+        .theme-board-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+            text-align: center;
+        }
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+        }
+        .color-box {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid rgba(0,0,0,0.1);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .color-box:hover {
+            transform: scale(1.15);
+            border-color: #333;
+        }
+
+        /* 무지개 및 구름 아이콘 스타일 */
+        .rainbow-box {
+            background: linear-gradient(45deg, #ff4d4d, #ff944d, #ffd11a, #4dff4d, #4da6ff, #b34dff) !important;
+        }
+        .cloud-box-icon {
+            background: #7fc1ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 80px auto 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0px 10px 20px rgba(0,0,0,0.1);
+            transition: background 0.4s;
+            position: relative;
+            z-index: 10;
+        }
+        h1 { font-size: 40px; margin-bottom: 15px; }
+        h2 { font-size: 32px; color: #4a90e2; }
+
+        /* 시험 범위 설정 구역 스타일 */
+        .range-selector-box {
+            background-color: #f1f5f9;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px dashed #cbd5e1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .range-selector-box label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .range-input {
+            width: 70px !important;
+            font-size: 18px !important;
+            padding: 6px !important;
+            text-align: center;
+            margin-bottom: 0 !important;
+            border: 2px solid #cbd5e1;
+            border-radius: 6px;
+        }
+        .range-btn {
+            font-size: 16px;
+            padding: 8px 16px;
+            background-color: #0ea5e9;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .range-btn:hover { background-color: #0284c7; }
+        .current-range-info {
+            font-size: 14px;
+            color: #64748b;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+        
+        /* 상단 단계 바로가기 메뉴 바 */
+        .stage-menu-bar {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+            background-color: #f8fafc;
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        .stage-menu-btn {
+            font-size: 15px;
+            padding: 8px 16px;
+            background-color: white;
+            color: #64748b;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .stage-menu-btn:hover {
+            background-color: #f1f5f9;
+            color: #334155;
+            border-color: #94a3b8;
+        }
+        .stage-menu-btn.active {
+            background-color: #4a90e2;
+            color: white;
+            border-color: #357abd;
+            box-shadow: 0 2px 4px rgba(74, 144, 226, 0.2);
+        }
+
+        .word-display { font-size: 60px; font-weight: bold; margin: 30px 0; min-height: 60px; }
+        .meaning-display { font-size: 38px; margin-bottom: 30px; min-height: 45px; color: #e67e22; }
+        
+        input[type="text"] {
+            font-size: 28px;
+            padding: 15px;
+            width: 80%;
+            border: 3px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* 4단계 전용 한 줄 빈칸 힌트 표시 스타일 */
+        .final-blank-hint {
+            font-size: 48px;
+            font-weight: bold;
+            letter-spacing: 6px;
+            margin: 25px 0;
+            font-family: 'Courier New', Courier, monospace;
+            color: #34495e;
+            background-color: #f8fafc;
+            padding: 15px;
+            border-radius: 10px;
+            display: inline-block;
+            border: 1px dashed #cbd5e1;
+            white-space: pre-wrap; /* 줄바꿈 방지 및 공백 유지 */
+        }
+
+        button.nav-btn {
+            font-size: 26px;
+            padding: 15px 40px;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button.nav-btn:hover { background-color: #357abd; }
+
+        .move-btn-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            padding: 0 10px;
+        }
+        button.side-btn {
+            font-size: 20px;
+            padding: 12px 25px;
+            background-color: #e2e8f0;
+            color: #4a5568;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        button.side-btn:hover:not(:disabled) {
+            background-color: #cbd5e0;
+            color: #2d3748;
+        }
+        button.side-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .message { font-size: 30px; margin: 20px 0; font-weight: bold; }
+
+        /* ===== 모바일 최적화 ===== */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .container { margin: 10px auto 0 auto; padding: 16px; border-radius: 14px; }
+            h1 { font-size: 24px; margin-bottom: 10px; }
+            h2 { font-size: 20px; }
+            .word-display { font-size: 48px; margin: 16px 0; }
+            .meaning-display { font-size: 28px; margin-bottom: 16px; }
+            .range-selector-box { flex-wrap: wrap; gap: 6px; }
+            .range-input { width: 55px !important; font-size: 16px !important; }
+            .range-btn { font-size: 14px; padding: 7px 12px; }
+            .stage-menu-bar { gap: 5px; padding: 7px; }
+            .stage-menu-btn { font-size: 12px; padding: 6px 8px; }
+            input[type="text"] { font-size: 22px; padding: 12px; width: 90%; }
+            button.nav-btn { font-size: 20px; padding: 14px 28px; width: 80%; }
+            button.side-btn { font-size: 16px; padding: 10px 16px; }
+            .final-blank-hint { font-size: 32px; letter-spacing: 4px; word-break: break-all; }
+            .message { font-size: 22px; }
+            .theme-menu-container { top: 10px; right: 10px; }
+            .theme-toggle-btn { font-size: 14px; padding: 7px 14px; }
+            .theme-board-container { width: 200px; }
+
+            /* 회차 범위 토글 */
+            #round-table-section { font-size: 13px; }
+            #round-table-section table { width: 100%; }
+        }
+
+        /* 회차별 범위 토글 스타일 */
+        #round-toggle-btn {
+            font-size: 14px; padding: 5px 12px;
+            background: #e2e8f0; border: none; border-radius: 6px;
+            cursor: pointer; font-weight: bold; color: #475569;
+            margin-left: 8px;
+        }
+        #round-table-section {
+            background: #f8fafc; border-radius: 10px;
+            padding: 12px; margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+        }
+        #round-table-section table {
+            border-collapse: collapse; width: auto; margin: 8px auto 0 auto;
+        }
+        #round-table-section th, #round-table-section td {
+            border: 1px solid #cbd5e1; padding: 5px 12px;
+            text-align: center; font-size: 14px;
+        }
+        #round-table-section th { background: #e0f2fe; font-weight: bold; }
+        #round-table-section tr:hover td { background: #f0f9ff; cursor: pointer; }
     </style>
 </head>
 <body>
-<div class="card">
 
-    <!-- 헤더 -->
-    <div class="header">
-        <h1>👑 나만의 <span class="hi">영어 단어 마스터</span></h1>
+<div class="sky-background" id="sky-bg">
+    <div class="cloud c1"></div>
+    <div class="cloud c2"></div>
+    <div class="cloud c3"></div>
+</div>
+
+<div class="theme-menu-container">
+    <button class="theme-toggle-btn" onclick="toggleThemeBoard()">🎨 테마 변경</button>
+    <div class="theme-board-container" id="theme-board">
+        <div class="theme-board-title">원하는 색을 콕! 🌈</div>
+        <div class="color-grid" id="color-palette"></div>
+    </div>
+</div>
+
+<div class="container" id="main-card">
+    <h1 id="main-title">👑 나만의 영어 단어 마스터</h1>
+    
+    <div class="range-selector-box">
+        <label>📖 범위:</label>
+        <input type="number" id="start-range" class="range-input" value="1" min="1" max="400"> ~
+        <input type="number" id="end-range" class="range-input" value="150" min="1" max="400"> 번
+        <button class="range-btn" onclick="applyWordRange()">적용</button>
+        <button id="round-toggle-btn" onclick="toggleRoundTable()">📅 회차 보기</button>
+        <div class="current-range-info" id="range-info" style="width:100%; margin-top:4px;">현재 설정: 전체 단어 공부 중</div>
     </div>
 
-    <!-- 범위 + 셔플 한 줄 -->
-    <div class="top-bar">
-        <label>📖 범위</label>
-        <input type="number" id="start-range" class="range-input" value="1">
-        <span class="sep">~</span>
-        <input type="number" id="end-range" class="range-input" value="150">
-        <span class="sep">번</span>
-        <button class="btn-apply" onclick="applyWordRange()">적용</button>
-        <div class="vdiv"></div>
-        <button class="btn-shuffle" id="shuffle-btn" onclick="toggleShuffle()">🔀 순서 섞기 OFF</button>
-    </div>
-    <div class="range-info" id="range-info">전체 단어 공부 중</div>
-
-    <!-- 회차별 범위표 -->
-    <div class="round-toggle">
-        <button class="btn-round-toggle" onclick="toggleRoundTable()">📅 회차별 범위 보기 ▼</button>
-    </div>
-    <div class="round-table-wrap" id="round-table-wrap">
-        <table class="round-table">
-            <thead><tr><th>회차</th><th>단어 범위</th><th>적용</th></tr></thead>
-            <tbody>
-                <tr><td>1회</td><td>1 ~ 33</td><td><button class="btn-round-apply" onclick="setRound(1,33)">적용</button></td></tr>
-                <tr><td>2회</td><td>1 ~ 66</td><td><button class="btn-round-apply" onclick="setRound(1,66)">적용</button></td></tr>
-                <tr><td>3회</td><td>1 ~ 99</td><td><button class="btn-round-apply" onclick="setRound(1,99)">적용</button></td></tr>
-                <tr><td>4회</td><td>1 ~ 132</td><td><button class="btn-round-apply" onclick="setRound(1,132)">적용</button></td></tr>
-                <tr><td>5회</td><td>34 ~ 165</td><td><button class="btn-round-apply" onclick="setRound(34,165)">적용</button></td></tr>
-                <tr><td>6회</td><td>67 ~ 198</td><td><button class="btn-round-apply" onclick="setRound(67,198)">적용</button></td></tr>
-                <tr><td>7회</td><td>100 ~ 231</td><td><button class="btn-round-apply" onclick="setRound(100,231)">적용</button></td></tr>
-                <tr><td>8회</td><td>133 ~ 264</td><td><button class="btn-round-apply" onclick="setRound(133,264)">적용</button></td></tr>
-                <tr><td>9회</td><td>166 ~ 298</td><td><button class="btn-round-apply" onclick="setRound(166,298)">적용</button></td></tr>
-                <tr><td>10회</td><td>199 ~ 332</td><td><button class="btn-round-apply" onclick="setRound(199,332)">적용</button></td></tr>
-                <tr><td>11회</td><td>232 ~ 366</td><td><button class="btn-round-apply" onclick="setRound(232,366)">적용</button></td></tr>
-                <tr><td>12회</td><td>265 ~ 400</td><td><button class="btn-round-apply" onclick="setRound(265,400)">적용</button></td></tr>
-            </tbody>
+    <div id="round-table-section" style="display:none;">
+        <b>📅 Jr E7-1 회차별 범위</b> — 행을 누르면 자동 적용!
+        <table>
+            <tr><th>회차</th><th>범위</th></tr>
+            <tr onclick="setRound(1,33)"><td>1회</td><td>1 ~ 33</td></tr>
+            <tr onclick="setRound(1,66)"><td>2회</td><td>1 ~ 66</td></tr>
+            <tr onclick="setRound(1,99)"><td>3회</td><td>1 ~ 99</td></tr>
+            <tr onclick="setRound(1,132)"><td>4회</td><td>1 ~ 132</td></tr>
+            <tr onclick="setRound(34,165)"><td>5회</td><td>34 ~ 165</td></tr>
+            <tr onclick="setRound(67,198)"><td>6회</td><td>67 ~ 198</td></tr>
+            <tr onclick="setRound(100,231)"><td>7회</td><td>100 ~ 231</td></tr>
+            <tr onclick="setRound(133,264)"><td>8회</td><td>133 ~ 264</td></tr>
+            <tr onclick="setRound(166,298)"><td>9회</td><td>166 ~ 298</td></tr>
+            <tr onclick="setRound(199,332)"><td>10회</td><td>199 ~ 332</td></tr>
+            <tr onclick="setRound(232,366)"><td>11회</td><td>232 ~ 366</td></tr>
+            <tr onclick="setRound(265,400)"><td>12회</td><td>265 ~ 400</td></tr>
         </table>
     </div>
 
-    <!-- 단계 탭 -->
-    <div class="stage-tabs">
-        <div class="tab" id="m-btn-1" onclick="jumpToStage(1)">👀 1단계</div>
-        <div class="tab" id="m-btn-2" onclick="jumpToStage(2)">📝 2단계</div>
-        <div class="tab" id="m-btn-3" onclick="jumpToStage(3)">🔄 3단계</div>
-        <div class="tab" id="m-btn-4" onclick="jumpToStage(4)">👾 4단계</div>
+    <div class="stage-menu-bar">
+        <button class="stage-menu-btn" id="m-btn-1" onclick="jumpToStage(1)">👀 1단계 연습</button>
+        <button class="stage-menu-btn" id="m-btn-2" onclick="jumpToStage(2)">📝 2단계 퀴즈</button>
+        <button class="stage-menu-btn" id="m-btn-3" onclick="jumpToStage(3)">🔄 3단계 오답노트</button>
+        <button class="stage-menu-btn" id="m-btn-4" onclick="jumpToStage(4)">👾 4단계 최종보스</button>
     </div>
 
-    <!-- 게임 구역 -->
+    <hr style="border: 1px solid #eee; margin-bottom: 30px;">
+    
     <div id="game-zone"></div>
 </div>
 
 <script src="words.js"></script>
+
 <script>
+const themes = [
+    { name: "스페셜 무지개 🌈", bg: "linear-gradient(135deg, #ffe6e6, #fff2e6, #fffae6, #e6ffe6, #e6f2ff, #f9e6ff)", text: "#2c3e50", card: "#ffffff", isRainbow: true },
+    { name: "몽글몽글 구름 하늘 ☁️", bg: "transparent", text: "#1e3a8a", card: "rgba(255, 255, 255, 0.92)", isSky: true },
+    { name: "부드러운 스카이 팹", bg: "#f0f4f8", text: "#2c3e50", card: "#ffffff" },
+    { name: "러블리 체리 핑크", bg: "#fff5f5", text: "#c92a2a", card: "#fff0f0" },
+    { name: "싱그러운 연두", bg: "#f4fce3", text: "#5c940d", card: "#f1fcc9" },
+    { name: "차분한 보라 라벤더", bg: "#f3f0ff", text: "#6741d9", card: "#ece7ff" },
+    { name: "달콤한 레몬 버터", bg: "#fff9db", text: "#d9480f", card: "#fff3bf" },
+    { name: "상큼한 오션 민트", bg: "#e3fafc", text: "#0b7285", card: "#c5f6fa" },
+    { name: "시크한 다크 그레이", bg: "#1a1b1e", text: "#c1c2c5", card: "#25262b" },
+    { name: "따뜻한 오렌지 라떼", bg: "#fff4e6", text: "#d9480f", card: "#ffe8cc" },
+    { name: "깔끔한 화이트 시크", bg: "#f8f9fa", text: "#212529", card: "#ffffff" },
+    { name: "시원한 사파이어 블루", bg: "#edf2ff", text: "#364fc7", card: "#dbe4ff" },
+    { name: "달콤 쌉싸름 진핑크", bg: "#fdf2f8", text: "#9d174d", card: "#fce7f3" },
+    { name: "차분한 웜 그레이", bg: "#fafaf9", text: "#1c1917", card: "#f5f5f4" },
+    { name: "싱싱한 에메랄드 그린", bg: "#ecfdf5", text: "#065f46", card: "#d1fae5" },
+    { name: "구운 식빵 브라운", bg: "#fff7ed", text: "#9a3412", card: "#ffedd5" },
+    { name: "청량한 여름 하늘", bg: "#eff6ff", text: "#1e40af", card: "#dbeafe" },
+    { name: "몽환적인 딥 퍼フル", bg: "#f5f3ff", text: "#5b21b6", card: "#ede9fe" },
+    { name: "포근한 카키 베이지", bg: "#fcf8e3", text: "#8a6d3b", card: "#fbeed5" },
+    { name: "우주 저편 네이비", bg: "#111827", text: "#10b981", card: "#1f2937" },
+    { name: "수줍은 라일락", bg: "#faf5ff", text: "#701a75", card: "#f3e8ff" },
+    { name: "모던 심플 그레이", bg: "#eaeaea", text: "#333333", card: "#d9d9d9" }
+];
+
+const palette = document.getElementById('color-palette');
+themes.forEach((theme, index) => {
+    const box = document.createElement('div');
+    box.className = 'color-box';
+    box.title = theme.name;
+    if (theme.isRainbow) { box.classList.add('rainbow-box'); } 
+    else if (theme.isSky) { box.classList.add('cloud-box-icon'); box.innerHTML = "☁️"; }
+    else { box.style.backgroundColor = theme.bg; }
+    box.onclick = () => { selectTheme(index); toggleThemeBoard(); };
+    palette.appendChild(box);
+});
+
+function toggleThemeBoard() {
+    const board = document.getElementById('theme-board');
+    board.style.display = (board.style.display === 'block') ? 'none' : 'block';
+}
+
+function selectTheme(index) {
+    const theme = themes[index];
+    const skyBg = document.getElementById('sky-bg');
+    
+    if (theme.isSky) {
+        skyBg.style.display = 'block';
+        document.body.style.background = 'transparent';
+    } else {
+        skyBg.style.display = 'none';
+        document.body.style.background = theme.bg;
+    }
+    
+    document.body.style.color = theme.text;
+    const card = document.getElementById('main-card');
+    card.style.backgroundColor = theme.card;
+    card.style.color = theme.text;
+}
+
+window.onclick = function(event) {
+    if (!event.target.matches('.theme-toggle-btn') && !event.target.matches('.color-box') && !event.target.matches('.theme-board-title') && !event.target.matches('.color-grid')) {
+        document.getElementById('theme-board').style.display = 'none';
+    }
+}
+
 const START_BOOK_NUMBER = 1;
-let activeWords=[], currentIndex=0, wrongWords=[], wrongWords4=[];
-let wrongCount=1, stage1Step="show_eng", currentStage=1;
-let isShuffled=false, correctCount2=0, totalAnswered2=0;
-let currentStreak=0, selfAssessMap={}, waitingForNext=false, nextAction=null;
-const zone = document.getElementById('game-zone');
 
-// ─ 헬퍼 ─────────────────────────────────────────
-function renderProgress(cur, tot) {
-    const pct = tot>0 ? Math.round(cur/tot*100) : 0;
-    return `<div class="prog-wrap">
-        <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
-        <div class="prog-text">${cur}/${tot} (${pct}%)</div>
-    </div>`;
-}
-function renderStreak() {
-    if(currentStreak===0) return `<div class="streak s0">연속 정답 0</div>`;
-    if(currentStreak<3)   return `<div class="streak s1">🔥 ${currentStreak}연속!</div>`;
-    if(currentStreak<6)   return `<div class="streak s2">🔥🔥 ${currentStreak}연속!</div>`;
-    return `<div class="streak s3">🔥🔥🔥 ${currentStreak}연속! 대박!</div>`;
-}
-function speakWord(text) {
-    window.speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(text); u.lang='en-US'; u.rate=0.85;
-    window.speechSynthesis.speak(u);
-}
-function shuffleArray(arr) {
-    const a=[...arr];
-    for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
-    return a;
-}
-function updateTabs(n){for(let i=1;i<=4;i++)document.getElementById(`m-btn-${i}`).classList.toggle('active',i===n);}
-function advanceAfterWrong(){
-    if(!waitingForNext || !nextAction) return;
-    waitingForNext=false; nextAction();
-}
-function resetState(){currentIndex=0;wrongWords=[];wrongWords4=[];correctCount2=0;totalAnswered2=0;currentStreak=0;selfAssessMap={};wrongCount=1;waitingForNext=false;nextAction=null;}
-function esc(s){return s.replace(/'/g,"\\'")}
-
-// ─ 셔플 ─────────────────────────────────────────
-function toggleShuffle(){
-    isShuffled=!isShuffled;
-    const btn=document.getElementById('shuffle-btn');
-    btn.textContent=isShuffled?'🔀 순서 섞기 ON':'🔀 순서 섞기 OFF';
-    btn.classList.toggle('on',isShuffled);
-    if(isShuffled) activeWords=shuffleArray(activeWords);
-    resetState(); startStage1();
+function toggleRoundTable() {
+    const sec = document.getElementById('round-table-section');
+    sec.style.display = (sec.style.display === 'none') ? 'block' : 'none';
 }
 
-// ─ 회차 범위표 ───────────────────────────────────
-function toggleRoundTable(){
-    const wrap=document.getElementById('round-table-wrap');
-    const btn=document.querySelector('.btn-round-toggle');
-    const isOpen=wrap.style.display==='block';
-    wrap.style.display=isOpen?'none':'block';
-    btn.textContent=isOpen?'📅 회차별 범위 보기 ▼':'📅 회차별 범위 닫기 ▲';
-}
-function setRound(s,e){
-    document.getElementById('start-range').value=s;
-    document.getElementById('end-range').value=e;
-    toggleRoundTable(); // 표 닫기
+function setRound(s, e) {
+    document.getElementById('start-range').value = s;
+    document.getElementById('end-range').value = e;
+    toggleRoundTable();
     applyWordRange();
 }
 
-// ─ 범위 ─────────────────────────────────────────
-function applyWordRange(){
-    let s=parseInt(document.getElementById('start-range').value);
-    let e=parseInt(document.getElementById('end-range').value);
-    if(isNaN(s)||isNaN(e)){alert("숫자로 입력해 주세요!");return;}
-    if(s>e){alert("시작이 끝보다 클 수 없습니다!");return;}
-    let si=s-START_BOOK_NUMBER, ei=e-START_BOOK_NUMBER;
-    if(si<0||ei>=words.length){alert(`범위: ${START_BOOK_NUMBER}~${START_BOOK_NUMBER+words.length-1}번`);return;}
-    activeWords=words.slice(si,ei+1);
-    if(isShuffled) activeWords=shuffleArray(activeWords);
-    document.getElementById('range-info').textContent=`${s}번 ~ ${e}번 | 총 ${activeWords.length}개`;
-    resetState(); startStage1();
-}
-function initGame(){
-    if(typeof words!=='undefined'&&words.length>0){
-        const t=words.length, ei=t-1, si=Math.max(0,ei-149);
-        activeWords=words.slice(si,ei+1);
-        const sn=START_BOOK_NUMBER+si, en=START_BOOK_NUMBER+ei;
-        document.getElementById('start-range').value=sn;
-        document.getElementById('end-range').value=en;
-        document.getElementById('range-info').textContent=`${sn}번 ~ ${en}번 | 총 ${activeWords.length}개`;
-    }
-    resetState(); startStage1();
-}
+let activeWords = []; 
+let currentIndex = 0;
+let wrongWords = [];
+let wrongCount = 1;
+let stage1Step = "show_eng";
+let currentStage = 1;
 
-// ─ 키보드 엔터 ──────────────────────────────────
-document.addEventListener('keydown',e=>{
-    if(e.key!=='Enter' && e.key!==' ') return;
-    if(e.key===' ' && document.activeElement.tagName==='INPUT') return;
-    e.preventDefault();
-    if(waitingForNext){ advanceAfterWrong(); return; }
-    if(currentStage===1) handleStage1();
-    else if(currentStage===2) checkStage2();
-    else if(currentStage===3) checkStage3();
-    else if(currentStage===4) checkStage4();
-});
+const zone = document.getElementById('game-zone');
 
-// ─ 단계 이동 ────────────────────────────────────
-function jumpToStage(n){
-    currentIndex=0;
-    if(n===1) startStage1();
-    else if(n===2){correctCount2=0;totalAnswered2=0;currentStreak=0;startStage2();}
-    else if(n===3){
-        if(wrongWords.length===0){
-            zone.innerHTML=`<div style="padding:24px 0">
-                <div class="stage-title">🔄 3단계: 오답 반복</div>
-                <p style="font-size:15px;color:var(--sub);margin:10px 0">아직 틀린 단어가 없어요 😊<br>2단계를 먼저 풀어주세요.</p>
-                <button class="btn-main" onclick="jumpToStage(2)">📝 2단계 시작</button></div>`;
-            updateTabs(3); currentStage=3; return;
-        }
-        wrongCount=1; startStage3();
-    }
-    else if(n===4){wrongWords4=[];currentStreak=0;startStage4();}
-}
-function movePrev(){if(currentIndex>0){currentIndex--;if(currentStage===1)startStage1();else if(currentStage===2)startStage2();}}
-function moveNext(){
-    if(currentIndex<activeWords.length-1){currentIndex++;if(currentStage===1)startStage1();else if(currentStage===2)startStage2();}
-    else if(currentStage===1){currentIndex=0;startStage2();}
-    else if(currentStage===2){currentIndex=0;startStage2();}
-}
+function applyWordRange() {
+    let startInput = parseInt(document.getElementById('start-range').value);
+    let endInput = parseInt(document.getElementById('end-range').value);
+    let infoEl = document.getElementById('range-info');
 
-// ─ 1단계 ────────────────────────────────────────
-function startStage1(){
-    currentStage=1; updateTabs(1);
-    if(activeWords.length===0){zone.innerHTML='<p style="padding:30px;color:var(--sub)">범위를 설정해 주세요.</p>';return;}
-    if(currentIndex<activeWords.length){
-        stage1Step="show_eng";
-        const w=activeWords[currentIndex];
-        const bn=START_BOOK_NUMBER+words.indexOf(w);
-        const isFirst=currentIndex===0?"disabled":"";
-        const prev=selfAssessMap[w.eng];
-        const prevBadge=prev
-            ?(prev==='know'   ?'<span style="font-size:11px;color:#15803d;background:#dcfce7;padding:2px 7px;border-radius:10px;margin-left:6px;">✅알아요</span>'
-             :prev==='unsure' ?'<span style="font-size:11px;color:#a16207;background:#fef9c3;padding:2px 7px;border-radius:10px;margin-left:6px;">🤔헷갈려요</span>'
-             :                 '<span style="font-size:11px;color:#b91c1c;background:#fee2e2;padding:2px 7px;border-radius:10px;margin-left:6px;">❌몰라요</span>')
-            :'';
-        zone.innerHTML=`
-            ${renderProgress(currentIndex+1, activeWords.length)}
-            <div class="stage-title">👀 1단계: 뜻 맞히기 연습 (${bn}번) ${prevBadge}</div>
-            <div class="word-wrap">
-                <div class="word-big">${w.eng}</div>
-                <button class="btn-sound" onclick="speakWord('${esc(w.eng)}')">🔊</button>
-            </div>
-            <div id="meaning-box" class="meaning-ph">[엔터] 또는 버튼을 누르면 뜻이 나타납니다.</div>
-            <button class="btn-main" id="stage1-btn" onclick="handleStage1()">뜻 보기</button>
-            <div class="nav-row">
-                <button class="btn-nav" onclick="movePrev()" ${isFirst}>◀ 뒤로</button>
-                <button class="btn-nav" onclick="moveNext()">앞으로 ▶</button>
-            </div>`;
-        speakWord(w.eng);
-    } else {
-        showStage1Summary();
+    if (isNaN(startInput) || isNaN(endInput)) {
+        alert("시작 번호와 끝 번호를 숫자로 정확히 입력해 주세요!");
+        return;
     }
-}
-function handleStage1(){
-    const box=document.getElementById('meaning-box'), btn=document.getElementById('stage1-btn');
-    if(stage1Step==="show_eng"){
-        box.className='kor-big'; box.textContent=activeWords[currentIndex].kor;
-        btn.style.display="none";
-        const div=document.createElement('div');
-        div.id="assess-area";
-        div.innerHTML=`<div class="assess-label">이 단어, 얼마나 알고 있나요?</div>
-            <div class="assess-row">
-                <button class="abtn abtn-know"    onclick="rateWord('know')">✅ 알아요!</button>
-                <button class="abtn abtn-unsure"  onclick="rateWord('unsure')">🤔 헷갈려요</button>
-                <button class="abtn abtn-unknown" onclick="rateWord('unknown')">❌ 몰라요</button>
-            </div>`;
-        btn.parentNode.insertBefore(div, btn.nextSibling);
-        stage1Step="assess";
-    } else if(stage1Step==="assess"){
-        rateWord('unsure');
+    if (startInput > endInput) {
+        alert("시작 번호가 끝 번호보다 클 수 없습니다!");
+        return;
     }
-}
-function rateWord(r){selfAssessMap[activeWords[currentIndex].eng]=r;currentIndex++;startStage1();}
 
-function showStage1Summary(){
-    const tot=activeWords.length;
-    const k=activeWords.filter(w=>selfAssessMap[w.eng]==='know').length;
-    const u=activeWords.filter(w=>selfAssessMap[w.eng]==='unsure').length;
-    const un=activeWords.filter(w=>selfAssessMap[w.eng]==='unknown').length;
-    const focus=u+un;
-    currentStage=1; updateTabs(1);
-    zone.innerHTML=`
-        <div class="stage-title" style="font-size:17px;margin:6px 0">👀 1단계 완료! 🎉</div>
-        <div class="summary-box">
-            <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:8px;">나의 자기평가 결과</div>
-            <div class="assess-badges">
-                <div class="badge b-know">✅ 알아요 ${k}개</div>
-                <div class="badge b-unsure">🤔 헷갈려요 ${u}개</div>
-                <div class="badge b-unknown">❌ 몰라요 ${un}개</div>
-            </div>
-            ${focus>0
-                ?`<p style="font-size:13px;color:var(--sub)">💡 집중이 필요한 단어 <b>${focus}개</b> 있어요!</p>`
-                :`<p style="font-size:13px;color:var(--green);font-weight:800;">🏆 완벽! 다 알고 있네요!</p>`}
-        </div>
-        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px">
-            ${focus>0?`<button class="btn-main" style="background:var(--orange)" onclick="startFocusMode()">🎯 집중 훈련 (${focus}개만)</button>`:''}
-            <button class="btn-main" onclick="startStage2Full()">📝 전체 2단계 시작</button>
-        </div>`;
-}
-function startFocusMode(){
-    const f=activeWords.filter(w=>selfAssessMap[w.eng]==='unsure'||selfAssessMap[w.eng]==='unknown');
-    if(f.length===0){startStage2Full();return;}
-    activeWords=f;
-    document.getElementById('range-info').textContent=`집중 훈련 ${f.length}개 (헷갈림+모름)`;
-    currentIndex=0;wrongWords=[];wrongWords4=[];correctCount2=0;totalAnswered2=0;currentStreak=0;wrongCount=1;
-    startStage2();
-}
-function startStage2Full(){currentIndex=0;correctCount2=0;totalAnswered2=0;currentStreak=0;startStage2();}
+    let startIndex = startInput - START_BOOK_NUMBER;
+    let endIndex = endInput - START_BOOK_NUMBER;
 
-// ─ 2단계 ────────────────────────────────────────
-function startStage2(){
-    currentStage=2; updateTabs(2);
-    if(activeWords.length===0) return;
-    if(currentIndex<activeWords.length){
-        const w=activeWords[currentIndex], bn=START_BOOK_NUMBER+words.indexOf(w);
-        const isFirst=currentIndex===0?"disabled":"";
-        zone.innerHTML=`
-            ${renderProgress(currentIndex+1, activeWords.length)}
-            ${renderStreak()}
-            <div class="stage-title">📝 2단계: 뜻 보고 영어 맞히기 (${bn}번)</div>
-            <p class="hint-text">★ 천천히 정확하게 입력하세요!</p>
-            <div class="kor-big">뜻: ${w.kor}</div>
-            <input type="text" id="ans2" class="ans-input" placeholder="영어 단어 입력" autocomplete="off">
-            <div><button class="btn-main" id="btn2" onclick="checkStage2()">정답 확인</button></div>
-            <div id="msg2" class="msg"></div>
-            <div class="nav-row">
-                <button class="btn-nav" onclick="movePrev()" ${isFirst}>◀ 뒤로</button>
-                <button class="btn-nav" onclick="moveNext()">앞으로 ▶</button>
-            </div>`;
-        document.getElementById('ans2').focus();
-    } else {
-        if(wrongWords.length>0){wrongCount=1;startStage3();}
-        else{currentIndex=0;startStage4();}
+    if (startIndex < 0 || endIndex >= words.length || startIndex > endIndex) {
+        alert(`번호 범위 오류!\n현재 단어 범위: ${START_BOOK_NUMBER}번 ~ ${START_BOOK_NUMBER + words.length - 1}번`);
+        return;
     }
-}
-function checkStage2(){
-    const inp=document.getElementById('ans2'), btn=document.getElementById('btn2');
-    if(!inp||inp.disabled) return;
-    const user=inp.value.trim().toLowerCase(), correct=activeWords[currentIndex].eng.trim().toLowerCase();
-    inp.disabled=true; btn.disabled=true; totalAnswered2++;
-    const msg=document.getElementById('msg2');
-    if(user===correct){
-        correctCount2++; currentStreak++;
-        const sm=currentStreak>=6?`🔥🔥🔥 ${currentStreak}연속!`:currentStreak>=3?`🔥 ${currentStreak}연속!`:'';
-        msg.className='msg ok'; msg.innerHTML=`딩동댕! 정답 🎉 ${sm}`;
-        speakWord(activeWords[currentIndex].eng);
-        setTimeout(()=>{currentIndex++;startStage2();},1200);
-    } else {
-        currentStreak=0;
-        const wrongWord = activeWords[currentIndex];
-        msg.className='msg err';
-        msg.innerHTML=`땡! 정답: <b style="font-size:26px">${wrongWord.eng}</b>
-            <button class="btn-sound-sm" onclick="speakWord('${esc(wrongWord.eng)}')">🔊 발음 듣기</button>
-            <div style="font-size:15px;color:var(--sub);margin-top:8px;font-weight:700">[엔터] 또는 [스페이스] 누르면 다음으로 넘어갑니다</div>`;
-        if(!wrongWords.includes(wrongWord)) wrongWords.push(wrongWord);
-        speakWord(wrongWord.eng);
-        waitingForNext=true;
-        nextAction=()=>{currentIndex++;startStage2();};
-    }
-}
 
-// ─ 3단계 ────────────────────────────────────────
-function startStage3(){
-    currentStage=3; updateTabs(3);
-    if(wrongWords.length>0){
-        const w=wrongWords[0];
-        zone.innerHTML=`
-            <div class="prog-text" style="text-align:center;margin-bottom:8px">오답 남은 수: <b>${wrongWords.length}개</b></div>
-            <div class="stage-title">🔄 3단계: 오답 반복 [${wrongCount}회차]</div>
-            <p class="hint-text">틀린 단어를 확실하게 외워봐요!</p>
-            <div class="kor-big">뜻: ${w.kor}</div>
-            <input type="text" id="ans3" class="ans-input" placeholder="영어 단어 다시 입력" autocomplete="off">
-            <div><button class="btn-main" id="btn3" onclick="checkStage3()">정답 확인</button></div>
-            <div id="msg3" class="msg"></div>`;
-        document.getElementById('ans3').focus();
-    } else {currentIndex=0;startStage4();}
-}
-function checkStage3(){
-    const inp=document.getElementById('ans3'), btn=document.getElementById('btn3');
-    if(!inp||inp.disabled) return;
-    const user=inp.value.trim().toLowerCase(), w=wrongWords.shift(), correct=w.eng.trim().toLowerCase();
-    inp.disabled=true; btn.disabled=true;
-    const msg=document.getElementById('msg3');
-    if(user===correct){
-        msg.className='msg ok'; msg.innerHTML='좋아요! 맞혔어요 👍';
-        speakWord(correct); wrongCount++;
-        setTimeout(()=>startStage3(),1200);
-    } else {
-        msg.className='msg err';
-        msg.innerHTML=`땡! 정답: <b style="font-size:26px">${w.eng}</b>
-            <button class="btn-sound-sm" onclick="speakWord('${esc(w.eng)}')">🔊 발음 듣기</button>
-            <div style="font-size:15px;color:var(--sub);margin-top:8px;font-weight:700">[엔터] 또는 [스페이스] 누르면 다음으로 넘어갑니다</div>`;
-        speakWord(w.eng);
-        wrongWords.push(w); wrongCount++;
-        waitingForNext=true;
-        nextAction=()=>startStage3();
-    }
-}
+    activeWords = words.slice(startIndex, endIndex + 1);
+    infoEl.innerText = `현재 설정: [ ${startInput}번 ~ ${endInput}번 ] 총 ${activeWords.length}개 단어 집중 훈련 중!`;
+    infoEl.style.color = "#e67e22";
 
-// ─ 4단계 ────────────────────────────────────────
-function startStage4(){
-    currentStage=4; updateTabs(4);
-    if(activeWords.length===0) return;
-    if(currentIndex<activeWords.length){
-        const w=activeWords[currentIndex], bn=START_BOOK_NUMBER+words.indexOf(w);
-        zone.innerHTML=`
-            ${renderProgress(currentIndex+1, activeWords.length)}
-            ${renderStreak()}
-            <div class="stage-title">👾 4단계: 최종 보스 빈칸 채우기 (${bn}번)</div>
-            <div class="kor-big">뜻: ${w.kor}</div>
-            <div><div class="hint-line">${w.blank}</div></div>
-            <input type="text" id="ans4" class="ans-input" placeholder="단어 전체를 입력하세요" style="width:85%" autocomplete="off">
-            <div><button class="btn-main" id="btn4" onclick="checkStage4()">정답 제출</button></div>
-            <div id="msg4" class="msg"></div>`;
-        document.getElementById('ans4').focus();
-    } else {showFinalResult();}
-}
-function checkStage4(){
-    const inp=document.getElementById('ans4'), btn=document.getElementById('btn4');
-    if(!inp||inp.disabled) return;
-    const user=inp.value.trim().toLowerCase(), correct=activeWords[currentIndex].eng.trim().toLowerCase();
-    const msg=document.getElementById('msg4');
-    if(user===correct){
-        inp.disabled=true; btn.disabled=true; currentStreak++;
-        const sm=currentStreak>=6?`🔥🔥🔥 ${currentStreak}연속!`:currentStreak>=3?`🔥 ${currentStreak}연속!`:'';
-        msg.className='msg ok'; msg.innerHTML=`완벽 클리어! ✨ ${sm}`;
-        speakWord(correct);
-        setTimeout(()=>{currentIndex++;startStage4();},1400);
-    } else {
-        currentStreak=0;
-        if(!wrongWords4.find(w=>w.eng===activeWords[currentIndex].eng)) wrongWords4.push(activeWords[currentIndex]);
-        msg.className='msg err';
-        msg.innerHTML=`철자 확인! 힌트를 다시 보세요.
-            <button class="btn-sound-sm" onclick="speakWord('${esc(activeWords[currentIndex].eng)}')">🔊 발음 듣기</button>`;
-        inp.focus();
-    }
-}
-
-// ─ 최종 결과 ────────────────────────────────────
-function showFinalResult(){
-    const tot=activeWords.length, cn=tot-wrongWords4.length;
-    const acc=tot>0?Math.round(cn/tot*100):100;
-    const emoji=acc===100?"🏆":acc>=80?"🎉":acc>=60?"👍":"💪";
-    const cmnt=acc===100?"완벽! 진짜 최고!":acc>=80?"대단해요! 거의 다 외웠어요!":acc>=60?"잘했어요! 조금만 더!":"다시 도전!";
-    const wl=wrongWords4.length>0?`<div class="wrong-list">
-        <div class="wl-title">📌 틀린 단어 (다시 외워요!)</div>
-        ${wrongWords4.map(w=>`<div class="wl-item">❌ <b>${w.eng}</b> — ${w.kor}</div>`).join('')}
-    </div>`:'';
-    zone.innerHTML=`
-        <div style="font-size:46px;margin:4px 0">${emoji}</div>
-        <div style="font-size:24px;font-weight:900;color:var(--green);margin:2px 0">미션 컴플리트!</div>
-        <p style="font-size:15px;font-weight:700;margin-bottom:8px">${cmnt}</p>
-        <div class="result-box">
-            <div class="score-sub">최종 정확도</div>
-            <div class="score-num">${acc}%</div>
-            <div class="stat-row">
-                <div class="stat t"><span class="n">${tot}</span>전체</div>
-                <div class="stat c"><span class="n">${cn}</span>정답</div>
-                <div class="stat w"><span class="n">${wrongWords4.length}</span>오답</div>
-            </div>
-            ${wl}
-        </div>
-        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px">
-            <button class="btn-main" style="background:var(--orange)" onclick="restartWrong()" ${wrongWords4.length===0?'disabled':''}>🔁 틀린 것만 다시</button>
-            <button class="btn-main" onclick="initGame()">🔄 처음부터</button>
-        </div>`;
-}
-function restartWrong(){
-    if(wrongWords4.length===0) return;
-    activeWords=[...wrongWords4];
-    document.getElementById('range-info').textContent=`틀린 단어 ${activeWords.length}개 재도전`;
-    wrongWords=[];wrongWords4=[];correctCount2=0;totalAnswered2=0;currentIndex=0;wrongCount=1;currentStreak=0;selfAssessMap={};
+    currentIndex = 0;
+    wrongWords = [];
     startStage1();
 }
 
+function initGame() {
+    if(typeof words !== 'undefined' && words.length > 0) {
+        activeWords = [...words]; 
+        // 입력 힌트창 기본 가이드 채워넣기
+        document.getElementById('start-range').placeholder = START_BOOK_NUMBER;
+        document.getElementById('end-range').placeholder = START_BOOK_NUMBER + words.length - 1;
+    }
+    currentIndex = 0;
+    startStage1();
+}
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        if (currentStage === 1) { handleStage1(); }
+        else if (currentStage === 2) { checkStage2(); }
+        else if (currentStage === 3) { checkStage3(); }
+        else if (currentStage === 4) { checkStage4(); }
+    }
+});
+
+function speakWord(text) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+     utterance.lang = 'en-US';
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
+}
+
+function updateMenuHighlight(stageNum) {
+    for (let i = 1; i <= 4; i++) {
+        document.getElementById(`m-btn-${i}`).classList.remove('active');
+    }
+    document.getElementById(`m-btn-${stageNum}`).classList.add('active');
+}
+
+function jumpToStage(stageNum) {
+    currentIndex = 0;
+    if (stageNum === 1) {
+        startStage1();
+    } else if (stageNum === 2) {
+        startStage2();
+    } else if (stageNum === 3) {
+        if (wrongWords.length === 0 && activeWords.length > 0) {
+            wrongWords.push({eng: activeWords[0].eng, kor: activeWords[0].kor + " (연습용 오답)", blank: activeWords[0].blank});
+        }
+        wrongCount = 1;
+        startStage3();
+    } else if (stageNum === 4) {
+        startStage4();
+    }
+}
+
+function movePrev() {
+    if (currentIndex > 0) {
+        currentIndex--;
+        if (currentStage === 1) startStage1();
+        else if (currentStage === 2) startStage2();
+    }
+}
+
+function moveNext() {
+    if (currentIndex < activeWords.length - 1) {
+        currentIndex++;
+        if (currentStage === 1) startStage1();
+        else if (currentStage === 2) startStage2();
+    } else if (currentIndex === activeWords.length - 1 && currentStage === 1) {
+        currentIndex = 0;
+        startStage2();
+    } else if (currentIndex === activeWords.length - 1 && currentStage === 2) {
+        currentIndex++;
+        startStage2();
+    }
+}
+
+function startStage1() {
+    currentStage = 1;
+    updateMenuHighlight(1);
+    
+    if(activeWords.length === 0) {
+        zone.innerHTML = "<h2>📖 상단 범위 설정에서 단어 범위를 입력하고 적용해 주세요!</h2>";
+        return;
+    }
+
+    if(currentIndex < activeWords.length) {
+        stage1Step = "show_eng";
+        let originalIdx = words.indexOf(activeWords[currentIndex]);
+        let bookNum = START_BOOK_NUMBER + originalIdx;
+        let isFirst = currentIndex === 0 ? "disabled" : "";
+
+        zone.innerHTML = `
+            <h2>👀 1단계: 뜻 맞히기 연습 (단어책 ${bookNum}번)</h2>
+            <div class="word-display">${activeWords[currentIndex].eng}</div>
+            <div id="meaning-box" class="meaning-display" style="opacity: 0.5; font-size:28px;">버튼을 누르면 뜻이 나타납니다.</div>
+            <p style="font-size: 16px; color:#888;">🔊 단어가 바뀔 때 원어민 발음이 자동으로 나옵니다.</p>
+            <br>
+            <button class="nav-btn" id="stage1-btn" onclick="handleStage1()">뜻 보기</button>
+            
+            <div class="move-btn-container">
+                <button class="side-btn" onclick="movePrev()" ${isFirst}>◀ 뒤로가기</button>
+                <button class="side-btn" onclick="moveNext()">앞으로가기 ▶</button>
+            </div>
+        `;
+        speakWord(activeWords[currentIndex].eng);
+    } else {
+        currentIndex = 0;
+        startStage2();
+    }
+}
+
+function handleStage1() {
+    let meaningBox = document.getElementById('meaning-box');
+    let btn = document.getElementById('stage1-btn');
+    
+    if (stage1Step === "show_eng") {
+        meaningBox.style.opacity = "1";
+        meaningBox.style.fontSize = "45px";
+        meaningBox.style.fontWeight = "bold";
+        meaningBox.innerHTML = activeWords[currentIndex].kor;
+        btn.innerHTML = "다음 단어로 넘어가기";
+        stage1Step = "show_kor";
+    } else if (stage1Step === "show_kor") {
+        currentIndex++;
+        startStage1();
+    }
+}
+
+function startStage2() {
+    currentStage = 2;
+    updateMenuHighlight(2);
+
+    if(activeWords.length === 0) return;
+
+    if(currentIndex < activeWords.length) {
+        let originalIdx = words.indexOf(activeWords[currentIndex]);
+        let bookNum = START_BOOK_NUMBER + originalIdx;
+        let isFirst = currentIndex === 0 ? "disabled" : "";
+
+        zone.innerHTML = `
+            <h2>📝 2단계: 뜻 보고 영어 맞히기 (${bookNum}번)</h2>
+            <p style="font-size:22px; color:#ff6b6b; font-weight:bold;">★ 시간 제한이 없으니 천천히 정확하게 치세요! ★</p>
+            <div class="meaning-display" style="font-size:50px; font-weight:bold;">뜻: ${activeWords[currentIndex].kor}</div>
+            <input type="text" id="ans2" placeholder="영어 단어 입력" autocomplete="off">
+            <br><button class="nav-btn" id="btn2" onclick="checkStage2()">정답 확인</button>
+            <div id="msg2" class="message"></div>
+
+            <div class="move-btn-container">
+                <button class="side-btn" onclick="movePrev()" ${isFirst}>◀ 뒤로가기</button>
+                <button class="side-btn" onclick="moveNext()">앞으로가기 ▶</button>
+            </div>
+        `;
+        document.getElementById('ans2').focus();
+    } else {
+        if(wrongWords.length > 0) {
+            wrongCount = 1;
+            startStage3();
+        } else {
+            currentIndex = 0;
+            startStage4();
+        }
+    }
+}
+
+function checkStage2() {
+    let inputEl = document.getElementById('ans2');
+    let btnEl = document.getElementById('btn2');
+    if(!inputEl || inputEl.disabled) return;
+
+    let userAns = inputEl.value.trim().toLowerCase();
+    let correctAns = activeWords[currentIndex].eng.trim().toLowerCase();
+    let msg = document.getElementById('msg2');
+    
+    inputEl.disabled = true;
+    btnEl.disabled = true;
+
+    if(userAns === correctAns) {
+        msg.style.color = "green";
+        msg.innerHTML = "딩동댕! 정답입니다. 🎉";
+        speakWord(activeWords[currentIndex].eng);
+        setTimeout(() => { currentIndex++; startStage2(); }, 1250);
+    } else {
+        msg.style.color = "red";
+        msg.innerHTML = `땡! 정답은 [ ${activeWords[currentIndex].eng} ] 입니다. 😢`;
+        if(!wrongWords.includes(activeWords[currentIndex])) {
+            wrongWords.push(activeWords[currentIndex]);
+        }
+        setTimeout(() => { currentIndex++; startStage2(); }, 2200);
+    }
+}
+
+function startStage3() {
+    currentStage = 3;
+    updateMenuHighlight(3);
+
+    if(wrongWords.length > 0) {
+        let currentWord = wrongWords[0];
+        zone.innerHTML = `
+            <h2>🔄 3단계: 오답 무한 반복 모드 [3-${wrongCount}]</h2>
+            <p style="font-size:20px; opacity:0.8;">틀린 단어를 확실하게 외워봅시다!</p>
+            <div class="meaning-display" style="font-size:50px; font-weight:bold;">뜻: ${currentWord.kor}</div>
+            <input type="text" id="ans3" placeholder="영어 단어 다시 입력" autocomplete="off">
+            <br><button class="nav-btn" id="btn3" onclick="checkStage3()">정답 확인</button>
+            <div id="msg3" class="message"></div>
+        `;
+        document.getElementById('ans3').focus();
+    } else {
+        currentIndex = 0;
+        startStage4();
+    }
+}
+
+function checkStage3() {
+    let inputEl = document.getElementById('ans3');
+    let btnEl = document.getElementById('btn3');
+    if(!inputEl || inputEl.disabled) return;
+
+    let userAns = inputEl.value.trim().toLowerCase();
+    let currentWord = wrongWords.shift();
+    let correctAns = currentWord.eng.trim().toLowerCase();
+    let msg = document.getElementById('msg3');
+    
+    inputEl.disabled = true;
+    btnEl.disabled = true;
+    
+    if(userAns === correctAns) {
+        msg.style.color = "green";
+        msg.innerHTML = "좋아요! 이번엔 맞혔습니다. 👍";
+        speakWord(correctAns);
+        wrongCount++;
+        setTimeout(() => { startStage3(); }, 1200);
+    } else {
+        msg.style.color = "red";
+        msg.innerHTML = `아직 못 외웠군요! 정답은 [ ${currentWord.eng} ] 입니다. 맨 뒤로 보냅니다.`;
+        wrongWords.push(currentWord);
+        wrongCount++;
+        setTimeout(() => { startStage3(); }, 2200);
+    }
+}
+
+function startStage4() {
+    currentStage = 4;
+    updateMenuHighlight(4);
+
+    if(activeWords.length === 0) return;
+
+    if(currentIndex < activeWords.length) {
+        let originalIdx = words.indexOf(activeWords[currentIndex]);
+        let bookNum = START_BOOK_NUMBER + originalIdx;
+        let wordObj = activeWords[currentIndex];
+
+        zone.innerHTML = `
+            <h2>👾 4단계: 최종 보스 빈칸 스펠링 채우기 (${bookNum}번)</h2>
+            <div class="meaning-display" style="font-size:45px; font-weight:bold;">뜻: ${wordObj.kor}</div>
+            
+            <div>
+                <div class="final-blank-hint">${wordObj.blank}</div>
+            </div>
+            
+            <input type="text" id="ans4" placeholder="지워진 부분을 생각해서 단어 전체를 입력하세요" style="width: 85%;" autocomplete="off">
+            <br>
+            <button class="nav-btn" id="btn4" onclick="checkStage4()">정답 제출</button>
+            <div id="msg4" class="message"></div>
+        `;
+        
+        document.getElementById('ans4').focus();
+
+    } else {
+        zone.innerHTML = `
+            <h1 style="color:#27ae60; font-size:60px;">🏆 미션 컴플리트! 🏆</h1>
+            <p style="font-size:35px; font-weight:bold;">선택하신 시험 범위 단어 공부를 모두 끝마쳤습니다! 최고예요!</p>
+            <br><button class="nav-btn" onclick="initGame()">전체 단어 다시 공부하기</button>
+        `;
+    }
+}
+
+function checkStage4() {
+    let inputEl = document.getElementById('ans4');
+    let btnEl = document.getElementById('btn4');
+    if(!inputEl || inputEl.disabled) return;
+
+    let userAns = inputEl.value.trim().toLowerCase();
+    let correctAns = activeWords[currentIndex].eng.trim().toLowerCase();
+    let msg = document.getElementById('msg4');
+
+    if(userAns === correctAns) {
+        inputEl.disabled = true;
+        btnEl.disabled = true;
+        msg.style.color = "green";
+        msg.innerHTML = "통과! 전체 스펠링 완벽 클리어! ✨";
+
+        speakWord(correctAns);
+        setTimeout(() => { currentIndex++; startStage4(); }, 1400);
+    } else {
+        msg.style.color = "red";
+        msg.innerHTML = "철자가 틀렸거나 빠진 부분이 있습니다! 힌트를 보고 다시 신중하게 입력해 보세요.";
+        inputEl.focus();
+    }
+}
+
+// 최초 초기화 함수 구동
 initGame();
 </script>
+
 </body>
 </html>
