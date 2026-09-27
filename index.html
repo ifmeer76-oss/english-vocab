@@ -9,7 +9,7 @@
             font-family: 'Malgun Gothic', sans-serif;
             background-color: #f0f4f8;
             color: #2c3e50;
-            padding: 30px;
+            padding: 10px;
             text-align: center;
             transition: background 0.4s, color 0.4s;
             position: relative;
@@ -135,9 +135,9 @@
 
         .container {
             max-width: 850px;
-            margin: 80px auto 0 auto;
+            margin: 12px auto 0 auto;
             background: white;
-            padding: 40px;
+            padding: 16px;
             border-radius: 20px;
             box-shadow: 0px 10px 20px rgba(0,0,0,0.1);
             transition: background 0.4s;
@@ -224,44 +224,47 @@
             box-shadow: 0 2px 4px rgba(74, 144, 226, 0.2);
         }
 
-        .word-display { font-size: 60px; font-weight: bold; margin: 30px 0; min-height: 60px; }
-        .meaning-display { font-size: 38px; margin-bottom: 30px; min-height: 45px; color: #e67e22; }
-        
+        /* ===== 기본값 = 모바일 우선 ===== */
+        .word-display { font-size: 48px; font-weight: bold; margin: 18px 0; min-height: 50px; word-break: break-word; }
+        .meaning-display { font-size: 28px; margin-bottom: 18px; min-height: 36px; color: #e67e22; }
+
         input[type="text"] {
-            font-size: 28px;
-            padding: 15px;
-            width: 80%;
+            font-size: 22px;
+            padding: 12px;
+            width: 88%;
             border: 3px solid #ddd;
             border-radius: 10px;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         /* 4단계 전용 한 줄 빈칸 힌트 표시 스타일 */
         .final-blank-hint {
-            font-size: 48px;
+            font-size: 32px;
             font-weight: bold;
-            letter-spacing: 6px;
-            margin: 25px 0;
+            letter-spacing: 4px;
+            margin: 18px 0;
             font-family: 'Courier New', Courier, monospace;
             color: #34495e;
             background-color: #f8fafc;
-            padding: 15px;
+            padding: 12px;
             border-radius: 10px;
             display: inline-block;
             border: 1px dashed #cbd5e1;
-            white-space: pre-wrap; /* 줄바꿈 방지 및 공백 유지 */
+            white-space: pre-wrap;
+            word-break: break-all;
         }
 
         button.nav-btn {
-            font-size: 26px;
-            padding: 15px 40px;
+            font-size: 20px;
+            padding: 14px 30px;
             background-color: #4a90e2;
             color: white;
             border: none;
             border-radius: 10px;
             cursor: pointer;
             font-weight: bold;
+            width: 80%;
         }
         button.nav-btn:hover { background-color: #357abd; }
 
@@ -269,12 +272,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 25px;
-            padding: 0 10px;
+            margin-top: 20px;
+            padding: 0 6px;
         }
         button.side-btn {
-            font-size: 20px;
-            padding: 12px 25px;
+            font-size: 16px;
+            padding: 10px 18px;
             background-color: #e2e8f0;
             color: #4a5568;
             border: none;
@@ -292,33 +295,39 @@
             cursor: not-allowed;
         }
 
-        .message { font-size: 30px; margin: 20px 0; font-weight: bold; }
+        .message { font-size: 22px; margin: 16px 0; font-weight: bold; }
 
-        /* ===== 모바일 최적화 ===== */
-        @media (max-width: 768px) {
-            body { padding: 10px; }
-            .container { margin: 10px auto 0 auto; padding: 16px; border-radius: 14px; }
-            h1 { font-size: 24px; margin-bottom: 10px; }
-            h2 { font-size: 20px; }
-            .word-display { font-size: 48px; margin: 16px 0; }
-            .meaning-display { font-size: 28px; margin-bottom: 16px; }
-            .range-selector-box { flex-wrap: wrap; gap: 6px; }
-            .range-input { width: 55px !important; font-size: 16px !important; }
-            .range-btn { font-size: 14px; padding: 7px 12px; }
-            .stage-menu-bar { gap: 5px; padding: 7px; }
-            .stage-menu-btn { font-size: 12px; padding: 6px 8px; }
-            input[type="text"] { font-size: 22px; padding: 12px; width: 90%; }
-            button.nav-btn { font-size: 20px; padding: 14px 28px; width: 80%; }
-            button.side-btn { font-size: 16px; padding: 10px 16px; }
-            .final-blank-hint { font-size: 32px; letter-spacing: 4px; word-break: break-all; }
-            .message { font-size: 22px; }
-            .theme-menu-container { top: 10px; right: 10px; }
-            .theme-toggle-btn { font-size: 14px; padding: 7px 14px; }
-            .theme-board-container { width: 200px; }
-
-            /* 회차 범위 토글 */
-            #round-table-section { font-size: 13px; }
+        /* ===== 모바일 세부 조정 (600px 이하) ===== */
+        @media (max-width: 600px) {
+            body { padding: 8px; }
+            .container { margin: 8px auto 0 auto; padding: 14px; border-radius: 12px; }
+            h1 { font-size: 22px; margin-bottom: 8px; }
+            h2 { font-size: 18px; }
+            .range-selector-box { flex-wrap: wrap; gap: 5px; }
+            .range-input { width: 52px !important; font-size: 15px !important; }
+            .range-btn { font-size: 13px; padding: 6px 10px; }
+            .stage-menu-bar { gap: 4px; padding: 6px; }
+            .stage-menu-btn { font-size: 11px; padding: 6px 6px; }
+            .theme-menu-container { top: 8px; right: 8px; }
+            .theme-toggle-btn { font-size: 13px; padding: 6px 12px; }
+            .theme-board-container { width: 190px; }
+            #round-table-section { font-size: 12px; }
             #round-table-section table { width: 100%; }
+        }
+
+        /* ===== PC 확대 (900px 이상) ===== */
+        @media (min-width: 900px) {
+            .container { margin: 80px auto 0 auto; padding: 40px; }
+            h1 { font-size: 40px; margin-bottom: 15px; }
+            h2 { font-size: 32px; }
+            .word-display { font-size: 64px; margin: 28px 0; }
+            .meaning-display { font-size: 40px; margin-bottom: 28px; }
+            input[type="text"] { font-size: 28px; padding: 15px; width: 78%; }
+            button.nav-btn { font-size: 26px; padding: 15px 50px; width: auto; }
+            button.side-btn { font-size: 20px; padding: 12px 28px; }
+            .final-blank-hint { font-size: 48px; letter-spacing: 6px; padding: 15px; }
+            .message { font-size: 30px; margin: 20px 0; }
+            .stage-menu-btn { font-size: 15px; padding: 8px 16px; }
         }
 
         /* 회차별 범위 토글 스타일 */
@@ -617,9 +626,11 @@ function startStage1() {
 
         zone.innerHTML = `
             <h2>👀 1단계: 뜻 맞히기 연습 (단어책 ${bookNum}번)</h2>
-            <div class="word-display">${activeWords[currentIndex].eng}</div>
+            <div class="word-display">
+                ${activeWords[currentIndex].eng}
+                <button onclick="speakWord('${activeWords[currentIndex].eng.replace(/'/g, "\\'")}')" style="background:none;border:none;cursor:pointer;font-size:0.6em;vertical-align:middle;padding:0 4px;" title="발음 듣기">🔊</button>
+            </div>
             <div id="meaning-box" class="meaning-display" style="opacity: 0.5; font-size:28px;">버튼을 누르면 뜻이 나타납니다.</div>
-            <p style="font-size: 16px; color:#888;">🔊 단어가 바뀔 때 원어민 발음이 자동으로 나옵니다.</p>
             <br>
             <button class="nav-btn" id="stage1-btn" onclick="handleStage1()">뜻 보기</button>
             
@@ -700,14 +711,16 @@ function checkStage2() {
     inputEl.disabled = true;
     btnEl.disabled = true;
 
+    const eng = activeWords[currentIndex].eng;
     if(userAns === correctAns) {
         msg.style.color = "green";
-        msg.innerHTML = "딩동댕! 정답입니다. 🎉";
-        speakWord(activeWords[currentIndex].eng);
+        msg.innerHTML = `딩동댕! 정답입니다. 🎉 <button onclick="speakWord('${eng.replace(/'/g,"\\'")}') " style="background:none;border:none;cursor:pointer;font-size:22px;">🔊</button>`;
+        speakWord(eng);
         setTimeout(() => { currentIndex++; startStage2(); }, 1250);
     } else {
         msg.style.color = "red";
-        msg.innerHTML = `땡! 정답은 [ ${activeWords[currentIndex].eng} ] 입니다. 😢`;
+        msg.innerHTML = `땡! 정답은 [ ${eng} ] 입니다. 😢 <button onclick="speakWord('${eng.replace(/'/g,"\\'")}') " style="background:none;border:none;cursor:pointer;font-size:22px;">🔊</button>`;
+        speakWord(eng);
         if(!wrongWords.includes(activeWords[currentIndex])) {
             wrongWords.push(activeWords[currentIndex]);
         }
@@ -749,15 +762,17 @@ function checkStage3() {
     inputEl.disabled = true;
     btnEl.disabled = true;
     
+    const eng3 = currentWord.eng;
     if(userAns === correctAns) {
         msg.style.color = "green";
-        msg.innerHTML = "좋아요! 이번엔 맞혔습니다. 👍";
-        speakWord(correctAns);
+        msg.innerHTML = `좋아요! 이번엔 맞혔습니다. 👍 <button onclick="speakWord('${eng3.replace(/'/g,"\\'")}') " style="background:none;border:none;cursor:pointer;font-size:22px;">🔊</button>`;
+        speakWord(eng3);
         wrongCount++;
         setTimeout(() => { startStage3(); }, 1200);
     } else {
         msg.style.color = "red";
-        msg.innerHTML = `아직 못 외웠군요! 정답은 [ ${currentWord.eng} ] 입니다. 맨 뒤로 보냅니다.`;
+        msg.innerHTML = `아직 못 외웠군요! 정답은 [ ${eng3} ] 입니다. 맨 뒤로 보냅니다. <button onclick="speakWord('${eng3.replace(/'/g,"\\'")}') " style="background:none;border:none;cursor:pointer;font-size:22px;">🔊</button>`;
+        speakWord(eng3);
         wrongWords.push(currentWord);
         wrongCount++;
         setTimeout(() => { startStage3(); }, 2200);
