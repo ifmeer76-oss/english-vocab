@@ -5,252 +5,146 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>나만의 영어 단어 마스터</title>
     <style>
+        /* ===== 다크 테마 고정 ===== */
+        :root {
+            --bg: #111214;
+            --card: #1e1f22;
+            --card2: #26282c;
+            --border: #3a3c40;
+            --text: #d4d5d8;
+            --text-sub: #7a7d85;
+            --accent: #4a90e2;
+            --accent2: #357abd;
+            --orange: #e67e22;
+            --green: #27ae60;
+            --red: #e74c3c;
+        }
+
         body {
             font-family: 'Malgun Gothic', sans-serif;
-            background-color: #f0f4f8;
-            color: #2c3e50;
+            background-color: var(--bg);
+            color: var(--text);
             padding: 10px;
             text-align: center;
-            transition: background 0.4s, color 0.4s;
-            position: relative;
             overflow-x: hidden;
             min-height: 100vh;
             margin: 0;
             box-sizing: border-box;
         }
-        
-        /* 움직이는 하늘 배경 구름 생성 구역 */
-        .sky-background {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, #7fc1ff 0%, #bce2ff 100%);
-            z-index: -1;
-            overflow: hidden;
-        }
-        /* 구름 모양 구조 */
-        .cloud {
-            position: absolute;
-            background: #ffffff;
-            border-radius: 200px;
-            opacity: 0.85;
-            animation: moveCloud linear infinite;
-        }
-        .cloud:before, .cloud:after {
-            content: '';
-            position: absolute;
-            background: #ffffff;
-            border-radius: 100px;
-        }
-        .c1 { width: 150px; height: 50px; top: 15%; animation-duration: 25s; opacity: 0.9; transform: scale(1); }
-        .c1:before { width: 60px; height: 60px; top: -30px; left: 20px; }
-        .c1:after { width: 80px; height: 80px; top: -40px; right: 20px; }
-
-        .c2 { width: 220px; height: 70px; top: 45%; animation-duration: 40s; opacity: 0.7; transform: scale(0.8); }
-        .c2:before { width: 90px; height: 90px; top: -45px; left: 30px; }
-        .c2:after { width: 110px; height: 110px; top: -55px; right: 30px; }
-
-        .c3 { width: 180px; height: 60px; top: 75%; animation-duration: 32s; opacity: 0.8; transform: scale(1.2); }
-        .c3:before { width: 70px; height: 70px; top: -35px; left: 25px; }
-        .c3:after { width: 90px; height: 90px; top: -45px; right: 25px; }
-
-        @keyframes moveCloud {
-            0% { left: -300px; }
-            100% { left: 100%; }
-        }
-
-        /* 오른쪽 상단 전체 메뉴 구역 */
-        .theme-menu-container {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            text-align: right;
-            z-index: 1000;
-        }
-
-        /* 메인 버튼 스타일 */
-        .theme-toggle-btn {
-            font-size: 18px;
-            padding: 10px 20px;
-            background-color: #333;
-            color: white;
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 4px 66px rgba(0,0,0,0.1);
-            transition: all 0.2s;
-        }
-        .theme-toggle-btn:hover {
-            transform: scale(1.05);
-        }
-
-        /* 22가지 색상이 들어있는 사각형 보드 상자 */
-        .theme-board-container {
-            display: none;
-            margin-top: 10px;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 12px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            width: 220px;
-            text-align: left;
-        }
-        .theme-board-title {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: #333;
-            text-align: center;
-        }
-        .color-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 6px;
-        }
-        .color-box {
-            width: 36px;
-            height: 36px;
-            border-radius: 6px;
-            cursor: pointer;
-            border: 2px solid rgba(0,0,0,0.1);
-            transition: transform 0.2s, border-color 0.2s;
-        }
-        .color-box:hover {
-            transform: scale(1.15);
-            border-color: #333;
-        }
-
-        /* 무지개 및 구름 아이콘 스타일 */
-        .rainbow-box {
-            background: linear-gradient(45deg, #ff4d4d, #ff944d, #ffd11a, #4dff4d, #4da6ff, #b34dff) !important;
-        }
-        .cloud-box-icon {
-            background: #7fc1ff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-        }
 
         .container {
             max-width: 850px;
             margin: 12px auto 0 auto;
-            background: white;
+            background: var(--card);
             padding: 16px;
             border-radius: 20px;
-            box-shadow: 0px 10px 20px rgba(0,0,0,0.1);
-            transition: background 0.4s;
+            box-shadow: 0px 10px 30px rgba(0,0,0,0.5);
             position: relative;
-            z-index: 10;
         }
-        h1 { font-size: 40px; margin-bottom: 15px; }
-        h2 { font-size: 32px; color: #4a90e2; }
+        h1 { font-size: 40px; margin-bottom: 15px; color: var(--text); }
+        h2 { font-size: 32px; color: var(--accent); }
 
-        /* 시험 범위 설정 구역 스타일 */
+        /* 범위 설정 */
         .range-selector-box {
-            background-color: #f1f5f9;
+            background-color: var(--card2);
             padding: 15px;
             border-radius: 12px;
             margin-bottom: 20px;
-            border: 1px dashed #cbd5e1;
+            border: 1px dashed var(--border);
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 10px;
         }
-        .range-selector-box label {
-            font-size: 16px;
-            font-weight: bold;
-        }
+        .range-selector-box label { font-size: 16px; font-weight: bold; }
         .range-input {
             width: 70px !important;
             font-size: 18px !important;
             padding: 6px !important;
             text-align: center;
             margin-bottom: 0 !important;
-            border: 2px solid #cbd5e1;
+            border: 2px solid var(--border);
             border-radius: 6px;
+            background: var(--bg);
+            color: var(--text);
         }
         .range-btn {
             font-size: 16px;
             padding: 8px 16px;
-            background-color: #0ea5e9;
+            background-color: var(--accent);
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
         }
-        .range-btn:hover { background-color: #0284c7; }
+        .range-btn:hover { background-color: var(--accent2); }
         .current-range-info {
             font-size: 14px;
-            color: #64748b;
+            color: var(--text-sub);
             margin-top: 5px;
             font-weight: bold;
         }
-        
-        /* 상단 단계 바로가기 메뉴 바 */
+
+        /* 단계 메뉴 */
         .stage-menu-bar {
             display: flex;
             justify-content: center;
             gap: 10px;
             margin-bottom: 25px;
-            background-color: #f8fafc;
+            background-color: var(--card2);
             padding: 10px;
             border-radius: 12px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border);
         }
         .stage-menu-btn {
             font-size: 15px;
             padding: 8px 16px;
-            background-color: white;
-            color: #64748b;
-            border: 1px solid #cbd5e1;
+            background-color: var(--card);
+            color: var(--text-sub);
+            border: 1px solid var(--border);
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
             transition: all 0.2s;
         }
-        .stage-menu-btn:hover {
-            background-color: #f1f5f9;
-            color: #334155;
-            border-color: #94a3b8;
-        }
+        .stage-menu-btn:hover { background-color: var(--card2); color: var(--text); }
         .stage-menu-btn.active {
-            background-color: #4a90e2;
+            background-color: var(--accent);
             color: white;
-            border-color: #357abd;
-            box-shadow: 0 2px 4px rgba(74, 144, 226, 0.2);
+            border-color: var(--accent2);
         }
 
         /* ===== 기본값 = 모바일 우선 ===== */
-        .word-display { font-size: 48px; font-weight: bold; margin: 18px 0; min-height: 50px; word-break: break-word; }
-        .meaning-display { font-size: 28px; margin-bottom: 18px; min-height: 36px; color: #e67e22; }
+        .word-display { font-size: 48px; font-weight: bold; margin: 18px 0; min-height: 50px; word-break: break-word; color: var(--text); }
+        .meaning-display { font-size: 28px; margin-bottom: 18px; min-height: 36px; color: var(--orange); }
 
         input[type="text"] {
             font-size: 22px;
             padding: 12px;
             width: 88%;
-            border: 3px solid #ddd;
+            border: 2px solid var(--border);
             border-radius: 10px;
             text-align: center;
             margin-bottom: 16px;
+            background: var(--bg);
+            color: var(--text);
         }
+        input[type="text"]:focus { border-color: var(--accent); outline: none; }
 
-        /* 4단계 전용 한 줄 빈칸 힌트 표시 스타일 */
+        /* 빈칸 힌트 */
         .final-blank-hint {
             font-size: 32px;
             font-weight: bold;
             letter-spacing: 4px;
             margin: 18px 0;
             font-family: 'Courier New', Courier, monospace;
-            color: #34495e;
-            background-color: #f8fafc;
+            color: #7dd3fc;
+            background-color: var(--card2);
             padding: 12px;
             border-radius: 10px;
             display: inline-block;
-            border: 1px dashed #cbd5e1;
+            border: 1px dashed var(--border);
             white-space: pre-wrap;
             word-break: break-all;
         }
@@ -258,7 +152,7 @@
         button.nav-btn {
             font-size: 20px;
             padding: 14px 30px;
-            background-color: #4a90e2;
+            background-color: var(--accent);
             color: white;
             border: none;
             border-radius: 10px;
@@ -266,7 +160,7 @@
             font-weight: bold;
             width: 80%;
         }
-        button.nav-btn:hover { background-color: #357abd; }
+        button.nav-btn:hover { background-color: var(--accent2); }
 
         .move-btn-container {
             display: flex;
@@ -278,24 +172,20 @@
         button.side-btn {
             font-size: 16px;
             padding: 10px 18px;
-            background-color: #e2e8f0;
-            color: #4a5568;
-            border: none;
+            background-color: var(--card2);
+            color: var(--text-sub);
+            border: 1px solid var(--border);
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
             transition: all 0.2s;
         }
-        button.side-btn:hover:not(:disabled) {
-            background-color: #cbd5e0;
-            color: #2d3748;
-        }
-        button.side-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
+        button.side-btn:hover:not(:disabled) { background-color: var(--border); color: var(--text); }
+        button.side-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
         .message { font-size: 22px; margin: 16px 0; font-weight: bold; }
+
+        hr { border-color: var(--border); }
 
         /* ===== 모바일 세부 조정 (600px 이하) ===== */
         @media (max-width: 600px) {
@@ -308,9 +198,6 @@
             .range-btn { font-size: 13px; padding: 6px 10px; }
             .stage-menu-bar { gap: 4px; padding: 6px; }
             .stage-menu-btn { font-size: 11px; padding: 6px 6px; }
-            .theme-menu-container { top: 8px; right: 8px; }
-            .theme-toggle-btn { font-size: 13px; padding: 6px 12px; }
-            .theme-board-container { width: 190px; }
             #round-table-section { font-size: 12px; }
             #round-table-section table { width: 100%; }
         }
@@ -337,52 +224,34 @@
             border: none; border-radius: 12px; cursor: pointer; font-weight: bold;
             transition: transform 0.15s, box-shadow 0.15s;
         }
-        .eval-btn:hover { transform: scale(1.07); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .eval-btn.know   { background: #d1fae5; color: #065f46; }
-        .eval-btn.unsure { background: #fef9c3; color: #92400e; }
-        .eval-btn.no     { background: #fee2e2; color: #991b1b; }
-        @media (min-width: 900px) {
-            .eval-btn { font-size: 22px; padding: 14px 30px; }
-        }
+        .eval-btn:hover { transform: scale(1.07); }
+        .eval-btn.know   { background: #166534; color: #bbf7d0; }
+        .eval-btn.unsure { background: #854d0e; color: #fef08a; }
+        .eval-btn.no     { background: #7f1d1d; color: #fecaca; }
+        @media (min-width: 900px) { .eval-btn { font-size: 22px; padding: 14px 30px; } }
 
-        /* 회차별 범위 토글 스타일 */
+        /* 회차 테이블 */
         #round-toggle-btn {
             font-size: 14px; padding: 5px 12px;
-            background: #e2e8f0; border: none; border-radius: 6px;
-            cursor: pointer; font-weight: bold; color: #475569;
+            background: var(--card2); border: 1px solid var(--border); border-radius: 6px;
+            cursor: pointer; font-weight: bold; color: var(--text-sub);
             margin-left: 8px;
         }
         #round-table-section {
-            background: #f8fafc; border-radius: 10px;
+            background: var(--card2); border-radius: 10px;
             padding: 12px; margin-bottom: 10px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border);
         }
-        #round-table-section table {
-            border-collapse: collapse; width: auto; margin: 8px auto 0 auto;
-        }
+        #round-table-section table { border-collapse: collapse; width: auto; margin: 8px auto 0 auto; }
         #round-table-section th, #round-table-section td {
-            border: 1px solid #cbd5e1; padding: 5px 12px;
-            text-align: center; font-size: 14px;
+            border: 1px solid var(--border); padding: 5px 12px;
+            text-align: center; font-size: 14px; color: var(--text);
         }
-        #round-table-section th { background: #e0f2fe; font-weight: bold; }
-        #round-table-section tr:hover td { background: #f0f9ff; cursor: pointer; }
+        #round-table-section th { background: #1e3a5f; color: #7dd3fc; font-weight: bold; }
+        #round-table-section tr:hover td { background: var(--border); cursor: pointer; }
     </style>
 </head>
 <body>
-
-<div class="sky-background" id="sky-bg">
-    <div class="cloud c1"></div>
-    <div class="cloud c2"></div>
-    <div class="cloud c3"></div>
-</div>
-
-<div class="theme-menu-container">
-    <button class="theme-toggle-btn" onclick="toggleThemeBoard()">🎨 테마 변경</button>
-    <div class="theme-board-container" id="theme-board">
-        <div class="theme-board-title">원하는 색을 콕! 🌈</div>
-        <div class="color-grid" id="color-palette"></div>
-    </div>
-</div>
 
 <div class="container" id="main-card">
     <h1 id="main-title">👑 나만의 영어 단어 마스터</h1>
@@ -430,72 +299,6 @@
 <script src="words.js"></script>
 
 <script>
-const themes = [
-    { name: "스페셜 무지개 🌈", bg: "linear-gradient(135deg, #ffe6e6, #fff2e6, #fffae6, #e6ffe6, #e6f2ff, #f9e6ff)", text: "#2c3e50", card: "#ffffff", isRainbow: true },
-    { name: "몽글몽글 구름 하늘 ☁️", bg: "transparent", text: "#1e3a8a", card: "rgba(255, 255, 255, 0.92)", isSky: true },
-    { name: "부드러운 스카이 팹", bg: "#f0f4f8", text: "#2c3e50", card: "#ffffff" },
-    { name: "러블리 체리 핑크", bg: "#fff5f5", text: "#c92a2a", card: "#fff0f0" },
-    { name: "싱그러운 연두", bg: "#f4fce3", text: "#5c940d", card: "#f1fcc9" },
-    { name: "차분한 보라 라벤더", bg: "#f3f0ff", text: "#6741d9", card: "#ece7ff" },
-    { name: "달콤한 레몬 버터", bg: "#fff9db", text: "#d9480f", card: "#fff3bf" },
-    { name: "상큼한 오션 민트", bg: "#e3fafc", text: "#0b7285", card: "#c5f6fa" },
-    { name: "시크한 다크 그레이", bg: "#1a1b1e", text: "#c1c2c5", card: "#25262b" },
-    { name: "따뜻한 오렌지 라떼", bg: "#fff4e6", text: "#d9480f", card: "#ffe8cc" },
-    { name: "깔끔한 화이트 시크", bg: "#f8f9fa", text: "#212529", card: "#ffffff" },
-    { name: "시원한 사파이어 블루", bg: "#edf2ff", text: "#364fc7", card: "#dbe4ff" },
-    { name: "달콤 쌉싸름 진핑크", bg: "#fdf2f8", text: "#9d174d", card: "#fce7f3" },
-    { name: "차분한 웜 그레이", bg: "#fafaf9", text: "#1c1917", card: "#f5f5f4" },
-    { name: "싱싱한 에메랄드 그린", bg: "#ecfdf5", text: "#065f46", card: "#d1fae5" },
-    { name: "구운 식빵 브라운", bg: "#fff7ed", text: "#9a3412", card: "#ffedd5" },
-    { name: "청량한 여름 하늘", bg: "#eff6ff", text: "#1e40af", card: "#dbeafe" },
-    { name: "몽환적인 딥 퍼フル", bg: "#f5f3ff", text: "#5b21b6", card: "#ede9fe" },
-    { name: "포근한 카키 베이지", bg: "#fcf8e3", text: "#8a6d3b", card: "#fbeed5" },
-    { name: "우주 저편 네이비", bg: "#111827", text: "#10b981", card: "#1f2937" },
-    { name: "수줍은 라일락", bg: "#faf5ff", text: "#701a75", card: "#f3e8ff" },
-    { name: "모던 심플 그레이", bg: "#eaeaea", text: "#333333", card: "#d9d9d9" }
-];
-
-const palette = document.getElementById('color-palette');
-themes.forEach((theme, index) => {
-    const box = document.createElement('div');
-    box.className = 'color-box';
-    box.title = theme.name;
-    if (theme.isRainbow) { box.classList.add('rainbow-box'); } 
-    else if (theme.isSky) { box.classList.add('cloud-box-icon'); box.innerHTML = "☁️"; }
-    else { box.style.backgroundColor = theme.bg; }
-    box.onclick = () => { selectTheme(index); toggleThemeBoard(); };
-    palette.appendChild(box);
-});
-
-function toggleThemeBoard() {
-    const board = document.getElementById('theme-board');
-    board.style.display = (board.style.display === 'block') ? 'none' : 'block';
-}
-
-function selectTheme(index) {
-    const theme = themes[index];
-    const skyBg = document.getElementById('sky-bg');
-    
-    if (theme.isSky) {
-        skyBg.style.display = 'block';
-        document.body.style.background = 'transparent';
-    } else {
-        skyBg.style.display = 'none';
-        document.body.style.background = theme.bg;
-    }
-    
-    document.body.style.color = theme.text;
-    const card = document.getElementById('main-card');
-    card.style.backgroundColor = theme.card;
-    card.style.color = theme.text;
-}
-
-window.onclick = function(event) {
-    if (!event.target.matches('.theme-toggle-btn') && !event.target.matches('.color-box') && !event.target.matches('.theme-board-title') && !event.target.matches('.color-grid')) {
-        document.getElementById('theme-board').style.display = 'none';
-    }
-}
-
 const START_BOOK_NUMBER = 1;
 
 function toggleRoundTable() {
@@ -924,9 +727,6 @@ function checkStage4() {
 function nextAfterWrong4() {
     startStage4();
 }
-
-// 최초 테마: 시크한 다크 그레이 (index 8)
-selectTheme(8);
 
 // 최초 초기화 함수 구동
 initGame();
