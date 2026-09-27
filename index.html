@@ -330,6 +330,21 @@
             .stage-menu-btn { font-size: 15px; padding: 8px 16px; }
         }
 
+        /* 자기평가 버튼 */
+        .eval-btn-group { display: flex; justify-content: center; gap: 12px; margin: 14px 0; flex-wrap: wrap; }
+        .eval-btn {
+            font-size: 18px; padding: 12px 20px;
+            border: none; border-radius: 12px; cursor: pointer; font-weight: bold;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .eval-btn:hover { transform: scale(1.07); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .eval-btn.know   { background: #d1fae5; color: #065f46; }
+        .eval-btn.unsure { background: #fef9c3; color: #92400e; }
+        .eval-btn.no     { background: #fee2e2; color: #991b1b; }
+        @media (min-width: 900px) {
+            .eval-btn { font-size: 22px; padding: 14px 30px; }
+        }
+
         /* 회차별 범위 토글 스타일 */
         #round-toggle-btn {
             font-size: 14px; padding: 5px 12px;
@@ -495,12 +510,14 @@ function setRound(s, e) {
     applyWordRange();
 }
 
-let activeWords = []; 
+let activeWords = [];
 let currentIndex = 0;
 let wrongWords = [];
 let wrongCount = 1;
 let stage1Step = "show_eng";
 let currentStage = 1;
+let selfEval = [];      // 1단계 자기평가: 각 단어별 'know'|'unsure'|'no'
+let focusWords = [];    // 2단계부터 사용할 집중 단어 (unsure+no)
 
 const zone = document.getElementById('game-zone');
 
@@ -532,23 +549,30 @@ function applyWordRange() {
 
     currentIndex = 0;
     wrongWords = [];
+    selfEval = new Array(activeWords.length).fill(null);
+    focusWords = [];
     startStage1();
 }
 
 function initGame() {
     if(typeof words !== 'undefined' && words.length > 0) {
-        activeWords = [...words]; 
-        // 입력 힌트창 기본 가이드 채워넣기
+        activeWords = [...words];
         document.getElementById('start-range').placeholder = START_BOOK_NUMBER;
         document.getElementById('end-range').placeholder = START_BOOK_NUMBER + words.length - 1;
     }
     currentIndex = 0;
+    wrongWords = [];
+    selfEval = new Array(activeWords.length).fill(null);
+    focusWords = [];
     startStage1();
 }
 
 document.addEventListener('keydown', function(event) {
     if (event.key === 'Enter') {
-        if (currentStage === 1) { handleStage1(); }
+        if (currentStage === 1) {
+            // 자기평가 버튼이 표시 중일 땐 Enter 무시
+            if (stage1Step === "show_eng") { handleStage1(); }
+        }
         else if (currentStage === 2) { checkStage2(); }
         else if (currentStage === 3) { checkStage3(); }
         else if (currentStage === 4) { checkStage4(); }
@@ -624,22 +648,24 @@ function startStage1() {
         let bookNum = START_BOOK_NUMBER + originalIdx;
         let isFirst = currentIndex === 0 ? "disabled" : "";
 
+        const evalMark = selfEval[currentIndex] === 'know' ? ' ✅' : selfEval[currentIndex] === 'unsure' ? ' 🤔' : selfEval[currentIndex] === 'no' ? ' ❌' : '';
+        const engWord = activeWords[currentIndex].eng;
         zone.innerHTML = `
-            <h2>👀 1단계: 뜻 맞히기 연습 (단어책 ${bookNum}번)</h2>
+            <h2>👀 1단계: 뜻 맞히기 연습 (${bookNum}번) ${evalMark}</h2>
+            <div style="font-size:13px;color:#94a3b8;margin-bottom:4px;">${currentIndex+1} / ${activeWords.length}</div>
             <div class="word-display">
-                ${activeWords[currentIndex].eng}
-                <button onclick="speakWord('${activeWords[currentIndex].eng.replace(/'/g, "\\'")}')" style="background:none;border:none;cursor:pointer;font-size:0.6em;vertical-align:middle;padding:0 4px;" title="발음 듣기">🔊</button>
+                ${engWord}
+                <button onclick="speakWord('${engWord.replace(/'/g,"\\'")}')" style="background:none;border:none;cursor:pointer;font-size:0.6em;vertical-align:middle;padding:0 4px;" title="발음 듣기">🔊</button>
             </div>
-            <div id="meaning-box" class="meaning-display" style="opacity: 0.5; font-size:28px;">버튼을 누르면 뜻이 나타납니다.</div>
-            <br>
+            <div id="meaning-box" class="meaning-display" style="opacity:0.5;font-size:28px;">버튼을 누르면 뜻이 나타납니다.</div>
             <button class="nav-btn" id="stage1-btn" onclick="handleStage1()">뜻 보기</button>
-            
+            <div id="eval-box"></div>
             <div class="move-btn-container">
-                <button class="side-btn" onclick="movePrev()" ${isFirst}>◀ 뒤로가기</button>
-                <button class="side-btn" onclick="moveNext()">앞으로가기 ▶</button>
+                <button class="side-btn" onclick="movePrev()" ${isFirst}>◀ 뒤로</button>
+                <button class="side-btn" onclick="moveNext()">앞으로 ▶</button>
             </div>
         `;
-        speakWord(activeWords[currentIndex].eng);
+        speakWord(engWord);
     } else {
         currentIndex = 0;
         startStage2();
@@ -649,18 +675,69 @@ function startStage1() {
 function handleStage1() {
     let meaningBox = document.getElementById('meaning-box');
     let btn = document.getElementById('stage1-btn');
-    
+    let evalBox = document.getElementById('eval-box');
+
     if (stage1Step === "show_eng") {
         meaningBox.style.opacity = "1";
-        meaningBox.style.fontSize = "45px";
+        meaningBox.style.fontSize = "36px";
         meaningBox.style.fontWeight = "bold";
         meaningBox.innerHTML = activeWords[currentIndex].kor;
-        btn.innerHTML = "다음 단어로 넘어가기";
+        btn.style.display = "none";
+        // 자기평가 버튼 표시
+        evalBox.innerHTML = `
+            <p style="font-size:16px;color:#64748b;margin:10px 0 6px;">이 단어, 얼마나 알고 있나요?</p>
+            <div class="eval-btn-group">
+                <button class="eval-btn know"   onclick="setEval('know')">✅ 알아요!</button>
+                <button class="eval-btn unsure" onclick="setEval('unsure')">🤔 헷갈려요</button>
+                <button class="eval-btn no"     onclick="setEval('no')">❌ 몰라요</button>
+            </div>
+        `;
         stage1Step = "show_kor";
-    } else if (stage1Step === "show_kor") {
-        currentIndex++;
-        startStage1();
     }
+}
+
+function setEval(result) {
+    selfEval[currentIndex] = result;
+    currentIndex++;
+    if (currentIndex < activeWords.length) {
+        startStage1();
+    } else {
+        // 1단계 완료 — 집중훈련 대상 계산
+        focusWords = activeWords.filter((_, i) => selfEval[i] === 'unsure' || selfEval[i] === 'no');
+        const knowCount   = selfEval.filter(v => v === 'know').length;
+        const unsureCount = selfEval.filter(v => v === 'unsure').length;
+        const noCount     = selfEval.filter(v => v === 'no').length;
+        zone.innerHTML = `
+            <h2>🎉 1단계 완료!</h2>
+            <p style="font-size:20px;margin:10px 0;">
+                ✅ 알아요: <b>${knowCount}</b>개 &nbsp;
+                🤔 헷갈려요: <b>${unsureCount}</b>개 &nbsp;
+                ❌ 몰라요: <b>${noCount}</b>개
+            </p>
+            ${focusWords.length > 0
+                ? `<p style="font-size:17px;color:#e67e22;font-weight:bold;">🎯 헷갈리거나 모르는 단어 <b>${focusWords.length}</b>개로 집중훈련을 시작합니다!</p>
+                   <button class="nav-btn" onclick="startFocusTraining()">🚀 집중훈련 시작!</button>`
+                : `<p style="font-size:17px;color:#16a34a;font-weight:bold;">👏 모든 단어를 알고 있군요! 대단해요!</p>
+                   <button class="nav-btn" onclick="goStage2All()">📝 2단계로 바로 가기</button>`
+            }
+            <br><br>
+            <button class="side-btn" onclick="currentIndex=0;startStage1();" style="margin-top:8px;">🔄 1단계 다시 보기</button>
+        `;
+    }
+}
+
+function startFocusTraining() {
+    // focusWords를 activeWords로 교체하고 2단계 시작
+    activeWords = focusWords;
+    currentIndex = 0;
+    wrongWords = [];
+    startStage2();
+}
+
+function goStage2All() {
+    currentIndex = 0;
+    wrongWords = [];
+    startStage2();
 }
 
 function startStage2() {
