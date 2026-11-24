@@ -407,7 +407,7 @@ function loadPart(partNum) {
     if (loadedParts[partNum]) { resolve(); return; }
     const s = document.createElement('script');
     const pStr = String(partNum).padStart(2, '0');
-    s.src = `parts/part${pStr}.js`;
+    s.src = `part${pStr}.js`;
     s.onload = () => { loadedParts[partNum] = true; resolve(); };
     s.onerror = () => reject(new Error('part' + pStr + ' 로드 실패'));
     document.head.appendChild(s);
