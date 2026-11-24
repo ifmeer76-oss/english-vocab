@@ -279,6 +279,9 @@ header span {
 }
 .btn-next:hover { background: var(--accent2); }
 
+/* 가로모드 래퍼 — 세로에선 그냥 display:contents */
+.card-left, .card-right { display: contents; }
+
 /* 단계 힌트 */
 .step-hint {
   font-size: 12px;
@@ -317,7 +320,7 @@ header span {
   text-align: center;
 }
 
-/* 모바일 */
+/* 모바일 세로 */
 @media (max-width: 600px) {
   header { padding: 20px 16px 0; }
   header h1 { font-size: 18px; }
@@ -327,6 +330,96 @@ header span {
   .word-en { font-size: 36px; }
   #progress-rail { right: 10px; height: 180px; }
   .btn-next { padding: 12px 20px; font-size: 14px; }
+}
+
+/* ── 가로 모드 ── */
+@media (orientation: landscape) and (max-height: 500px) {
+  /* 헤더/범위박스 숨기기 (학습 중) */
+  body.studying header,
+  body.studying .range-box { display: none !important; }
+
+  body { overflow: hidden; height: 100vh; }
+
+  #study-wrap {
+    display: flex !important;
+    flex-direction: row;
+    align-items: stretch;
+    padding: 0;
+    max-width: 100%;
+    height: 100vh;
+    gap: 0;
+  }
+
+  /* 왼쪽: 예문 영역 */
+  .card-left {
+    display: flex !important;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    padding: 16px 20px;
+    border-right: 1px solid var(--border);
+    padding-bottom: 48px; /* controls 높이 확보 */
+  }
+
+  /* 오른쪽: 단어 + 컨트롤 */
+  .card-right {
+    display: flex !important;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    padding: 16px 20px;
+    gap: 8px;
+    padding-bottom: 48px;
+  }
+
+  /* 카드를 가로 2분할로 재배치 */
+  .card {
+    display: contents; /* 카드 박스 제거, 자식만 흐름에 참여 */
+  }
+
+  .word-badge {
+    position: fixed;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 0;
+    font-size: 11px;
+    z-index: 20;
+  }
+
+  #progress-rail {
+    right: 6px;
+    height: 60vh;
+  }
+
+  .sentence-en { font-size: 16px; }
+  .sentence-ko { font-size: 13px; margin-top: 10px; }
+  .word-en { font-size: 32px; }
+  .word-kor { font-size: 16px; margin-top: 6px; }
+
+  .btn-speak {
+    margin-top: 8px;
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+
+  .step-hint { font-size: 11px; margin-top: 6px; }
+
+  .controls {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 6px 12px;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    gap: 8px;
+    z-index: 20;
+  }
+
+  .btn-nav { padding: 8px 16px; font-size: 13px; }
+  .btn-next { padding: 8px 20px; font-size: 13px; max-width: 160px; }
 }
 </style>
 </head>
@@ -358,12 +451,16 @@ header span {
   <div class="word-badge" id="word-badge">001</div>
 
   <div class="card" id="card">
-    <div class="sentence-en" id="sent-en"></div>
-    <button class="btn-speak" id="btn-speak-sent" onclick="speakSentence()">🔊 문장 다시 듣기</button>
-    <div class="sentence-ko" id="sent-ko"></div>
-    <div class="word-en" id="word-en"></div>
-    <div class="word-kor" id="word-kor"></div>
-    <button class="btn-speak" id="btn-speak" onclick="speakCurrent()">🔊 발음 듣기</button>
+    <div class="card-left">
+      <div class="sentence-en" id="sent-en"></div>
+      <button class="btn-speak" id="btn-speak-sent" onclick="speakSentence()">🔊 문장 다시 듣기</button>
+      <div class="sentence-ko" id="sent-ko"></div>
+    </div>
+    <div class="card-right">
+      <div class="word-en" id="word-en"></div>
+      <div class="word-kor" id="word-kor"></div>
+      <button class="btn-speak" id="btn-speak" onclick="speakCurrent()">🔊 발음 듣기</button>
+    </div>
   </div>
 
   <div class="step-hint" id="step-hint">엔터 또는 다음을 눌러 계속</div>
@@ -456,6 +553,7 @@ async function startStudy() {
   }
 
   idx = 0; step = 0;
+  document.body.classList.add('studying');
   document.getElementById('study-wrap').style.display = 'block';
   document.getElementById('done-screen').style.display = 'none';
   renderCard();
@@ -582,6 +680,7 @@ function showDone() {
 }
 
 function backToRange() {
+  document.body.classList.remove('studying');
   document.getElementById('done-screen').style.display = 'none';
   document.getElementById('range-box').style.display = 'flex';
   updateRangeInfo();
