@@ -592,6 +592,48 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Enter' || e.key === 'ArrowRight') goNext();
   if (e.key === 'ArrowLeft') goPrev();
 });
+
+// ── 스와이프 / 마우스 드래그 ──
+(function() {
+  let startX = null;
+  const THRESHOLD = 50;
+
+  // 터치 (모바일)
+  document.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+  }, { passive: true });
+  document.addEventListener('touchend', e => {
+    if (startX === null) return;
+    const diff = startX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > THRESHOLD) {
+      if (diff > 0) skipToNext();   // 왼쪽 스와이프 → 다음 단어
+      else          goPrev();       // 오른쪽 스와이프 → 이전 단어
+    }
+    startX = null;
+  }, { passive: true });
+
+  // 마우스 드래그 (PC)
+  document.addEventListener('mousedown', e => { startX = e.clientX; });
+  document.addEventListener('mouseup', e => {
+    if (startX === null) return;
+    const diff = startX - e.clientX;
+    if (Math.abs(diff) > THRESHOLD) {
+      if (diff > 0) skipToNext();
+      else          goPrev();
+    }
+    startX = null;
+  });
+})();
+
+// ── 스와이프로 다음 단어 바로 이동 ──
+function skipToNext() {
+  if (idx < activeWords.length - 1) {
+    idx++; step = 0;
+    renderCard();
+  } else {
+    showDone();
+  }
+}
 </script>
 </body>
 </html>
