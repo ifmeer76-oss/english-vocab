@@ -356,9 +356,9 @@ header span {
     flex: 1;
     flex-direction: column;
     justify-content: center;
-    padding: 16px 20px;
+    align-items: flex-start;
+    padding: 48px 24px 56px; /* 위 48px = 뱃지 여백, 아래 56px = controls 여백 */
     border-right: 1px solid var(--border);
-    padding-bottom: 48px; /* controls 높이 확보 */
   }
 
   /* 오른쪽: 단어 + 컨트롤 */
@@ -367,9 +367,9 @@ header span {
     flex: 1;
     flex-direction: column;
     justify-content: center;
-    padding: 16px 20px;
+    align-items: flex-start;
+    padding: 48px 24px 56px;
     gap: 8px;
-    padding-bottom: 48px;
   }
 
   /* 카드를 가로 2분할로 재배치 */
@@ -392,10 +392,10 @@ header span {
     height: 60vh;
   }
 
-  .sentence-en { font-size: 16px; }
-  .sentence-ko { font-size: 13px; margin-top: 10px; }
-  .word-en { font-size: 32px; }
-  .word-kor { font-size: 16px; margin-top: 6px; }
+  .sentence-en { font-size: 22px; }
+  .sentence-ko { font-size: 16px; margin-top: 10px; }
+  .word-en { font-size: 42px; }
+  .word-kor { font-size: 20px; margin-top: 6px; }
 
   .btn-speak {
     margin-top: 8px;
