@@ -359,6 +359,7 @@ header span {
 
   <div class="card" id="card">
     <div class="sentence-en" id="sent-en"></div>
+    <button class="btn-speak" id="btn-speak-sent" onclick="speakSentence()">🔊 문장 다시 듣기</button>
     <div class="sentence-ko" id="sent-ko"></div>
     <div class="word-en" id="word-en"></div>
     <div class="word-kor" id="word-kor"></div>
@@ -479,17 +480,19 @@ function renderCard() {
   const wordKor = document.getElementById('word-kor');
   const btnSpk  = document.getElementById('btn-speak');
 
+  const btnSpkSent = document.getElementById('btn-speak-sent');
   sentKo .classList.toggle('show', step >= 1);
   wordEn .classList.toggle('show', step >= 2);
   wordKor.classList.toggle('show', step >= 3);
   btnSpk .classList.toggle('show', step >= 2);
+  btnSpkSent.classList.toggle('show', step >= 0);
 
   // 힌트
   const hints = ['예문을 읽어보세요', '번역 확인', '단어 확인', '뜻 확인 — 다음 단어로'];
   document.getElementById('step-hint').textContent = hints[step] || '';
 
   // 이전 버튼
-  document.getElementById('btn-prev').disabled = (idx === 0 && step === 0);
+  document.getElementById('btn-prev').disabled = (idx === 0);
 
   // 다음 버튼 텍스트
   const nextBtn = document.getElementById('btn-next');
@@ -530,12 +533,16 @@ function goNext() {
 
 // ── 이전 ──
 function goPrev() {
-  if (step > 0) {
-    step--;
-  } else if (idx > 0) {
-    idx--; step = 3;
+  if (idx > 0) {
+    idx--; step = 0;
+    renderCard();
   }
-  renderCard();
+}
+
+// ── 문장 다시 듣기 ──
+function speakSentence() {
+  const w = activeWords[idx];
+  speak(w.sentence || w.eng, 'en-US');
 }
 
 // ── 현재 단어 발음 ──
