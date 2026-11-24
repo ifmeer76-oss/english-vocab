@@ -357,7 +357,7 @@ header span {
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    padding: 48px 24px 56px; /* 위 48px = 뱃지 여백, 아래 56px = controls 여백 */
+    padding: 28px 24px 52px;
     border-right: 1px solid var(--border);
   }
 
@@ -368,7 +368,7 @@ header span {
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    padding: 48px 24px 56px;
+    padding: 28px 24px 52px;
     gap: 8px;
   }
 
@@ -379,13 +379,15 @@ header span {
 
   .word-badge {
     position: fixed;
-    top: 8px;
+    top: 6px;
     left: 50%;
     transform: translateX(-50%);
     margin-bottom: 0;
     font-size: 11px;
     z-index: 20;
   }
+
+  .step-hint { display: none; }
 
   #progress-rail {
     right: 6px;
